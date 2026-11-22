@@ -268,21 +268,23 @@ struct FoldSplit<L: View, R: View>: View {
 
     var body: some View {
         let width = frame.width
+        // Only trust a plausible measurement; otherwise fall back to two equal, uncapped halves.
+        let measured = width >= 500
         var mid = Self.screenMidX - frame.minX
-        if width <= 0 || mid < width * 0.25 || mid > width * 0.75 { mid = width / 2 }
+        if !measured || mid < width * 0.3 || mid > width * 0.7 { mid = width / 2 }
         return HStack(alignment: alignment, spacing: 0) {
             left
-                .frame(maxWidth: width > 0 ? max(0, mid - gap) : .infinity)
-            Color.clear.frame(width: width > 0 ? 2 * gap : gap, height: 1)
+                .frame(maxWidth: measured ? max(0, mid - gap) : .infinity, alignment: .leading)
+            Color.clear.frame(width: 2 * gap, height: 1)
             right
-                .frame(maxWidth: width > 0 ? max(0, width - mid - gap) : .infinity)
+                .frame(maxWidth: measured ? max(0, width - mid - gap) : .infinity, alignment: .leading)
         }
-        .frame(maxWidth: .infinity)
-        .background(GeometryReader { g in
-            Color.clear
-                .onAppear { frame = g.frame(in: .global) }
-                .onChange(of: g.frame(in: .global)) { _, f in frame = f }
-        })
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .onGeometryChange(for: CGRect.self) { proxy in
+            proxy.frame(in: .global)
+        } action: { f in
+            frame = f
+        }
     }
 }
 
