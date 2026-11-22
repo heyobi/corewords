@@ -1,0 +1,26 @@
+{
+  "sourceLanguage": "en",
+  "version": "1.0",
+  "strings": {
+    "NSSpeechRecognitionUsageDescription": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Corewords, bir kelimeyi nasıl telaffuz ettiğinizi kontrol etmek için cihazınızda dinler. Hiçbir şey kaydedilmez ya da bir yere gönderilmez."
+          }
+        }
+      }
+    },
+    "NSMicrophoneUsageDescription": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mikrofon yalnızca Söyle düğmesine basılı tuttuğunuz sürece, telaffuzunuzu bu cihazda kontrol etmek için kullanılır."
+          }
+        }
+      }
+    }
+  }
+}

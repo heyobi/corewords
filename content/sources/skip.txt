@@ -1,0 +1,10 @@
+# Words from the NGSL-GR extension that the app leaves out (vulgar or too disturbing for a 4+ learning app).
+fuck
+crap
+rape
+shit
+bitch
+bastard
+porn
+ass
+quadrillion

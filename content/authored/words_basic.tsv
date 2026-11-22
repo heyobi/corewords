@@ -1,0 +1,50 @@
+# NGSL supplementary words: days, months and numbers
+Monday	n	pazartesi	the day after Sunday	I start work on [Monday].
+Tuesday	n	salı	the day after Monday	The meeting is on [Tuesday].
+Wednesday	n	çarşamba	the day after Tuesday	See you on [Wednesday].
+Thursday	n	perşembe	the day after Wednesday	The shop is closed on [Thursday].
+Friday	n	cuma	the day after Thursday	We're going out on [Friday] night.
+Saturday	n	cumartesi	the day after Friday	I sleep late on [Saturday].
+Sunday	n	pazar	the day after Saturday	We have a big breakfast every [Sunday].
+January	n	ocak	the first month of the year	My birthday is in [January].
+February	n	şubat	the second month of the year	[February] is the shortest month.
+April	n	nisan	the fourth month of the year	It rains a lot in [April].
+June	n	haziran	the sixth month of the year	School finishes in [June].
+July	n	temmuz	the seventh month of the year	We go on holiday in [July].
+August	n	ağustos	the eighth month of the year	It's very hot in [August].
+September	n	eylül	the ninth month of the year	School starts in [September].
+October	n	ekim	the tenth month of the year	The Republic Day is in [October].
+November	n	kasım	the eleventh month of the year	It gets cold in [November].
+December	n	aralık	the twelfth month of the year	The year ends in [December].
+zero	num	sıfır	the number 0	It's [zero] degrees outside.
+two	num	iki	the number 2	I have [two] sisters.
+three	num	üç	the number 3	The film starts at [three].
+four	num	dört	the number 4	A car has [four] wheels.
+five	num	beş	the number 5	I'll be there in [five] minutes.
+six	num	altı	the number 6	I get up at [six].
+seven	num	yedi	the number 7	There are [seven] days in a week.
+eight	num	sekiz	the number 8	Class starts at [eight].
+nine	num	dokuz	the number 9	My son is [nine] years old.
+ten	num	on	the number 10	It costs [ten] euros.
+eleven	num	on bir	the number 11	A football team has [eleven] players.
+twelve	num	on iki	the number 12	There are [twelve] months in a year.
+thirteen	num	on üç	the number 13	She's [thirteen].
+fourteen	num	on dört	the number 14	The trip takes [fourteen] days.
+fifteen	num	on beş	the number 15	Wait [fifteen] minutes.
+sixteen	num	on altı	the number 16	He left school at [sixteen].
+seventeen	num	on yedi	the number 17	There are [seventeen] students in my class.
+eighteen	num	on sekiz	the number 18	You can vote at [eighteen].
+nineteen	num	on dokuz	the number 19	She was [nineteen] when she moved.
+twenty	num	yirmi	the number 20	I've been here for [twenty] years.
+thirty	num	otuz	the number 30	He's about [thirty].
+forty	num	kırk	the number 40	It takes [forty] minutes by bus.
+fifty	num	elli	the number 50	The jacket costs [fifty] dollars.
+sixty	num	altmış	the number 60	There are [sixty] minutes in an hour.
+seventy	num	yetmiş	the number 70	My grandfather is [seventy].
+eighty	num	seksen	the number 80	Drive at [eighty] kilometers an hour.
+ninety	num	doksan	the number 90	She lived to [ninety].
+hundred	num	yüz	the number 100	A [hundred] people came to the party.
+thousand	num	bin	the number 1,000	It costs two [thousand] lira.
+million	num	milyon	the number 1,000,000	The city has five [million] people.
+billion	num	milyar	the number 1,000,000,000	There are eight [billion] people on Earth.
+trillion	num	trilyon	a million million	The debt is over a [trillion] dollars.
