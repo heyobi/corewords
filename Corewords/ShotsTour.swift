@@ -118,7 +118,13 @@ struct ShotsTour {
         model.tab = .lessons
         await shot("7-lessons")
 
+        // 8. Paywall (for the in-app purchase review screenshot, not the store)
         model.tab = .today
+        model.showPaywall = true
+        await shot("8-paywall")
+        model.showPaywall = false
+        try? await Task.sleep(for: .seconds(1))
+
         write("ready", "done")
     }
 
