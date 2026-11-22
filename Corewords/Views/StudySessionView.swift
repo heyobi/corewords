@@ -258,13 +258,13 @@ struct ExerciseView: View {
     private var instruction: LocalizedStringKey {
         if checking { return "Quick check: what does it mean?" }
         switch exercise.kind {
-        case .intro: "New word"
-        case .wordToMeaning: "What does it mean?"
-        case .meaningToWord: "Which word means this?"
-        case .listen: "Which word do you hear?"
-        case .gapChoice: "Fill the gap"
-        case .typeWord: "Type the missing word"
-        case .sayIt: "Say it out loud"
+        case .intro: return "New word"
+        case .wordToMeaning: return "What does it mean?"
+        case .meaningToWord: return "Which word means this?"
+        case .listen: return "Which word do you hear?"
+        case .gapChoice: return "Fill the gap"
+        case .typeWord: return "Type the missing word"
+        case .sayIt: return "Say it out loud"
         }
     }
 
