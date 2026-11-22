@@ -45,7 +45,7 @@ struct LessonTile: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Color.brandIndigo.opacity(0.12))
                 Text(lesson.words.first.map { $0 } ?? "Aa").font(.rounded(17, .bold)).foregroundStyle(Color.brandIndigo)
-                    .minimumScaleFactor(0.5).padding(4)
+                    .lineLimit(1).minimumScaleFactor(0.4).padding(4)
             }
             .frame(width: 52, height: 52)
             VStack(alignment: .leading, spacing: 3) {

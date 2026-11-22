@@ -167,19 +167,21 @@ struct ProBadge: View {
     }
 }
 
-/// Lays out a view in one column on narrow screens and two on wide ones (iPad, iPhone Duo open, landscape).
+/// Lays out a view in one column on compact width and two side by side on regular width (iPad, the open
+/// iPhone Duo, large iPhones in landscape).
 struct Adaptive<A: View, B: View>: View {
-    var threshold: CGFloat = 700
+    @Environment(\.horizontalSizeClass) private var sizeClass
     var spacing: CGFloat = 20
     @ViewBuilder var first: A
     @ViewBuilder var second: B
 
     var body: some View {
-        ViewThatFits(in: .horizontal) {
+        if sizeClass == .regular {
             HStack(alignment: .top, spacing: spacing) {
-                VStack(spacing: spacing) { first }.frame(minWidth: threshold / 2 - spacing)
-                VStack(spacing: spacing) { second }.frame(minWidth: threshold / 2 - spacing)
+                VStack(spacing: spacing) { first }.frame(maxWidth: .infinity)
+                VStack(spacing: spacing) { second }.frame(maxWidth: .infinity)
             }
+        } else {
             VStack(spacing: spacing) {
                 first
                 second

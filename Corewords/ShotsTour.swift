@@ -50,10 +50,10 @@ struct ShotsTour {
         for off in 0..<21 {
             guard let d = cal.date(byAdding: .day, value: -off, to: now) else { continue }
             var log = DayLog()
-            log.answers = off == 0 ? 18 : [34, 41, 30, 52, 36, 31, 45][off % 7] - (off == 4 ? 10 : 0)
+            log.answers = off == 0 ? 18 : [34, 41, 32, 52, 36, 31, 45][off % 7]
             if off >= 18 { log.answers = 12 }
             log.correct = Int(Double(log.answers) * 0.86)
-            log.newItems = 10
+            log.newItems = off == 0 ? 4 : 10
             log.seconds = Double(log.answers) * 9
             p.days[ProgressData.dayKey(d)] = log
         }
@@ -79,7 +79,7 @@ struct ShotsTour {
             ShotsTour.forced = Exercise(item: w, kind: .intro, options: [], answerIndex: 0)
             await shot("2-intro")
             model.studying = nil
-            try? await Task.sleep(for: .seconds(1))
+            try? await Task.sleep(for: .seconds(3))
         }
 
         // 3. Fill the gap with feedback shown
@@ -92,17 +92,17 @@ struct ShotsTour {
             await shot("3-gap")
             model.studying = nil
             ShotsTour.forcedAnswer = nil
-            try? await Task.sleep(for: .seconds(1))
+            try? await Task.sleep(for: .seconds(3))
         }
 
         // 4. Listening exercise
-        if let w = item("thought") {
+        if let w = item("weather") {
             let engine = SessionEngine(content: content, progress: model.progress, now: Date(), decks: [.core], newLimit: 0, seed: 5)
             ShotsTour.forced = engine.make(.listen, for: w)
             model.studying = AppModel.StudyRequest(decks: [.core], extraNew: nil)
             await shot("4-listen")
             model.studying = nil
-            try? await Task.sleep(for: .seconds(1))
+            try? await Task.sleep(for: .seconds(3))
         }
         ShotsTour.forced = nil
 
