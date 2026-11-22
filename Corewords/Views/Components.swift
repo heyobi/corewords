@@ -250,8 +250,44 @@ struct ProBadge: View {
     }
 }
 
-/// Lays out a view in one column on compact width and two side by side on regular width (iPad, the open
-/// iPhone Duo, large iPhones in landscape).
+/// Two columns split at the middle of the screen, not just the middle of the view, with a clear gap on both
+/// sides. On an open iPhone Duo the middle of the screen is the fold, so nothing sits on it even when the view
+/// is offset by the sidebar or the status bar.
+struct FoldSplit<L: View, R: View>: View {
+    var alignment: VerticalAlignment = .top
+    var gap: CGFloat = 36
+    @ViewBuilder var left: L
+    @ViewBuilder var right: R
+    @State private var frame: CGRect = .zero
+
+    static var screenMidX: CGFloat {
+        let scene = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first
+        let w = scene?.windows.first(where: \.isKeyWindow)?.bounds.width ?? scene?.screen.bounds.width ?? 0
+        return w / 2
+    }
+
+    var body: some View {
+        let width = frame.width
+        var mid = Self.screenMidX - frame.minX
+        if width <= 0 || mid < width * 0.25 || mid > width * 0.75 { mid = width / 2 }
+        return HStack(alignment: alignment, spacing: 0) {
+            left
+                .frame(maxWidth: width > 0 ? max(0, mid - gap) : .infinity)
+            Color.clear.frame(width: width > 0 ? 2 * gap : gap, height: 1)
+            right
+                .frame(maxWidth: width > 0 ? max(0, width - mid - gap) : .infinity)
+        }
+        .frame(maxWidth: .infinity)
+        .background(GeometryReader { g in
+            Color.clear
+                .onAppear { frame = g.frame(in: .global) }
+                .onChange(of: g.frame(in: .global)) { _, f in frame = f }
+        })
+    }
+}
+
+/// One column on compact width; two columns on regular width (iPad, the open iPhone Duo, large iPhones in
+/// landscape), split at the fold.
 struct Adaptive<A: View, B: View>: View {
     @Environment(\.horizontalSizeClass) private var sizeClass
     var spacing: CGFloat = 20
@@ -260,15 +296,45 @@ struct Adaptive<A: View, B: View>: View {
 
     var body: some View {
         if sizeClass == .regular {
-            HStack(alignment: .top, spacing: spacing) {
-                VStack(spacing: spacing) { first }.frame(maxWidth: .infinity)
-                VStack(spacing: spacing) { second }.frame(maxWidth: .infinity)
+            FoldSplit(alignment: .top, gap: 18) {
+                VStack(spacing: spacing) { first }
+            } right: {
+                VStack(spacing: spacing) { second }
             }
         } else {
             VStack(spacing: spacing) {
                 first
                 second
             }
+        }
+    }
+}
+
+/// A grid that, on regular width, puts the first half of the items left of the fold and the rest right of it,
+/// so no cell straddles the iPhone Duo's fold.
+struct FoldGrid<Item: Identifiable, Cell: View>: View {
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    let items: [Item]
+    var minimum: CGFloat = 280
+    var spacing: CGFloat = 12
+    @ViewBuilder var cell: (Item) -> Cell
+
+    var body: some View {
+        if sizeClass == .regular && items.count > 1 {
+            let half = (items.count + 1) / 2
+            FoldSplit(alignment: .top, gap: 18) {
+                grid(Array(items.prefix(half)))
+            } right: {
+                grid(Array(items.dropFirst(half)))
+            }
+        } else {
+            grid(items)
+        }
+    }
+
+    private func grid(_ list: [Item]) -> some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: minimum), spacing: spacing)], spacing: spacing) {
+            ForEach(list) { cell($0) }
         }
     }
 }

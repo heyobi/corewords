@@ -172,17 +172,35 @@ struct ExerciseView: View {
 
     var item: StudyItem { exercise.item }
 
+    /// Space kept clear on each side of the screen's middle in two-column layouts, so nothing sits on the
+    /// iPhone Duo's fold.
+    static let foldGap: CGFloat = 36
+
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
                 Group {
-                    if exercise.kind == .intro {
-                        IntroCard(item: item, wide: wide)
-                    } else if wide {
-                        HStack(alignment: .center, spacing: 28) {
-                            prompt.frame(maxWidth: .infinity)
-                            answerArea.frame(maxWidth: .infinity)
+                    if wide {
+                        // Two halves split exactly at the middle of the screen (the fold on an open iPhone Duo):
+                        // the question on the left, answers, feedback and buttons on the right.
+                        FoldSplit(alignment: .center, gap: Self.foldGap) {
+                            Group {
+                                if exercise.kind == .intro { IntroCard(item: item, part: .main) } else { prompt }
+                            }
+                        } right: {
+                            VStack(spacing: 18) {
+                                if exercise.kind == .intro {
+                                    IntroCard(item: item, part: .detail)
+                                    introButtons
+                                } else {
+                                    answerArea
+                                    feedback
+                                }
+                            }
                         }
+                        .frame(minHeight: 420)
+                    } else if exercise.kind == .intro {
+                        IntroCard(item: item, part: .both)
                     } else {
                         VStack(spacing: 28) {
                             prompt
@@ -195,7 +213,7 @@ struct ExerciseView: View {
                 .padding(.bottom, 24)
             }
             .scrollDismissesKeyboard(.interactively)
-            bottomBar
+            if !wide { bottomBar }
         }
         .onAppear(perform: autoplay)
     }
@@ -313,18 +331,28 @@ struct ExerciseView: View {
 
     // MARK: bottom
 
+    private var introButtons: some View {
+        HStack(spacing: 12) {
+            Button(action: onKnown) { Label("I know it", systemImage: "checkmark") }.buttonStyle(SecondaryButtonStyle())
+            Button(action: onIntroDone) { Label("Learn it", systemImage: "brain.head.profile") }.buttonStyle(PrimaryButtonStyle())
+        }
+    }
+
+    @ViewBuilder private var feedback: some View {
+        if case .feedback(let grade, _, let typed) = phase {
+            FeedbackPanel(item: item, grade: grade, typed: typed, note: note, onContinue: onContinue,
+                          onTooEasy: grade == .good && !checking ? onTooEasy : nil, inline: wide)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+        }
+    }
+
     @ViewBuilder private var bottomBar: some View {
         if exercise.kind == .intro {
-            HStack(spacing: 12) {
-                Button(action: onKnown) { Label("I know it", systemImage: "checkmark") }.buttonStyle(SecondaryButtonStyle())
-                Button(action: onIntroDone) { Label("Learn it", systemImage: "brain.head.profile") }.buttonStyle(PrimaryButtonStyle())
-            }
-            .padding(.horizontal, 20).padding(.bottom, 12).padding(.top, 8)
-            .frame(maxWidth: 560)
-        } else if case .feedback(let grade, _, let typed) = phase {
-            FeedbackPanel(item: item, grade: grade, typed: typed, note: note, onContinue: onContinue,
-                          onTooEasy: grade == .good && !checking ? onTooEasy : nil)
-            .transition(.move(edge: .bottom).combined(with: .opacity))
+            introButtons
+                .padding(.horizontal, 20).padding(.bottom, 12).padding(.top, 8)
+                .frame(maxWidth: 560)
+        } else {
+            feedback
         }
     }
 }
@@ -372,21 +400,37 @@ struct OptionButton: View {
     }
 }
 
-/// The first meeting with a word.
+/// The first meeting with a word. Wide layouts show the two parts on either side of the fold.
 struct IntroCard: View {
+    enum Part { case main, detail, both }
     @EnvironmentObject var model: AppModel
     let item: StudyItem
-    let wide: Bool
+    var part: Part = .both
 
     var body: some View {
-        let main = VStack(spacing: 14) {
+        switch part {
+        case .main: main
+        case .detail: detail
+        case .both:
+            VStack(spacing: 22) {
+                main.padding(.top, 16)
+                detail
+            }
+        }
+    }
+
+    private var main: some View {
+        VStack(spacing: 14) {
             Text("New word").font(.subheadline.weight(.semibold)).foregroundStyle(Color.brandTeal)
             Text(item.headword).font(.rounded(50, .bold)).multilineTextAlignment(.center).minimumScaleFactor(0.5)
             POSBadge(pos: item.pos)
             IPARow(text: item.headword, us: item.us, uk: item.uk)
             SayItButton(listener: model.listener, word: item.headword, forms: item.forms)
         }
-        let detail = VStack(alignment: .leading, spacing: 14) {
+    }
+
+    private var detail: some View {
+        VStack(alignment: .leading, spacing: 14) {
             if model.settings.meaning == .turkish {
                 Label { Text(item.tr).font(.rounded(22, .semibold)) } icon: { Text("🇹🇷") }
             }
@@ -403,18 +447,6 @@ struct IntroCard: View {
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-
-        if wide {
-            HStack(alignment: .center, spacing: 28) {
-                main.frame(maxWidth: .infinity)
-                detail.frame(maxWidth: .infinity)
-            }
-        } else {
-            VStack(spacing: 22) {
-                main.padding(.top, 16)
-                detail
-            }
-        }
     }
 }
 
@@ -529,6 +561,8 @@ struct FeedbackPanel: View {
     let note: FeedbackNote
     let onContinue: () -> Void
     var onTooEasy: (() -> Void)?
+    /// Shown inside a column (wide layouts) instead of as a bottom sheet.
+    var inline = false
 
     var body: some View {
         let ok = grade != .again
@@ -568,8 +602,8 @@ struct FeedbackPanel: View {
         .padding(20)
         .frame(maxWidth: 720)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .padding(.horizontal, 12)
-        .padding(.bottom, 8)
+        .padding(.horizontal, inline ? 0 : 12)
+        .padding(.bottom, inline ? 0 : 8)
     }
 
     @ViewBuilder private var noteView: some View {
@@ -600,71 +634,105 @@ struct FeedbackPanel: View {
 
 struct SessionSummary: View {
     @EnvironmentObject var model: AppModel
+    @Environment(\.horizontalSizeClass) private var sizeClass
     let engine: SessionEngine?
     let coverageAtStart: Double
     let learnedAtStart: Int
     let onDone: () -> Void
 
+    private var reviewed: Int { engine?.reviewed ?? 0 }
+    private var learned: Int { model.progress.cards.values.filter(\.isLearned).count }
+    private var cov: Double { model.progress.coverage(model.content) }
+
     var body: some View {
-        let reviewed = engine?.reviewed ?? 0
+        ScrollView {
+            if sizeClass == .regular && reviewed > 0 {
+                // Results left of the fold, what you learned right of it.
+                FoldSplit(alignment: .top, gap: 30) {
+                    VStack(spacing: 22) { header; tiles }
+                } right: {
+                    VStack(spacing: 22) { knownPanel; wordList; doneButton }.padding(.top, 30)
+                }
+                .padding(24)
+            } else {
+                VStack(spacing: 22) {
+                    header
+                    if reviewed > 0 {
+                        tiles
+                        knownPanel
+                        wordList
+                    } else {
+                        Text("Your reviews are scheduled for later. Come back tomorrow, or add more decks.")
+                            .multilineTextAlignment(.center).foregroundStyle(.secondary)
+                    }
+                    doneButton
+                }
+                .padding(24)
+                .frame(maxWidth: 560)
+                .frame(maxWidth: .infinity)
+            }
+        }
+    }
+
+    private var header: some View {
+        VStack(spacing: 14) {
+            Image(systemName: reviewed > 0 ? "party.popper.fill" : "checkmark.seal.fill")
+                .font(.system(size: 64)).foregroundStyle(Color.brandTeal).padding(.top, 30)
+            Text(reviewed > 0 ? "Session complete" : "Nothing to study right now").font(.rounded(30, .bold))
+        }
+    }
+
+    private var tiles: some View {
         let correct = engine?.correct ?? 0
         let accuracy = reviewed > 0 ? Int((Double(correct) / Double(reviewed) * 100).rounded()) : 0
-        let learned = model.progress.cards.values.filter(\.isLearned).count
-        let cov = model.progress.coverage(model.content)
-        ScrollView {
-            VStack(spacing: 22) {
-                Image(systemName: reviewed > 0 ? "party.popper.fill" : "checkmark.seal.fill")
-                    .font(.system(size: 64)).foregroundStyle(Color.brandTeal).padding(.top, 30)
-                Text(reviewed > 0 ? "Session complete" : "Nothing to study right now").font(.rounded(30, .bold))
-                if reviewed > 0 {
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 14) {
-                        tile("\(reviewed)", "exercises", "square.stack.3d.up.fill", .brandIndigo)
-                        tile("\(accuracy)%", "correct", "target", .good)
-                        tile("+\(max(0, learned - learnedAtStart))", "words learned", "sparkles", .brandTeal)
-                        tile("\(model.progress.streak(now: Date()))", "day streak", "flame.fill", .orange)
-                    }
-                    Panel {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("You now know \(learned) words, about \(Int(cov.rounded()))% of everyday English.")
-                                .font(.headline)
-                            if cov > coverageAtStart + 0.005 {
-                                Text("+\(String(format: "%.1f", cov - coverageAtStart)) points of everyday English in this session.")
-                                    .font(.subheadline).foregroundStyle(Color.brandTeal)
-                            }
-                            if (engine?.knownByCheck ?? 0) > 0 {
-                                Text("\(engine?.knownByCheck ?? 0) words you already knew were skipped after a quick check.")
-                                    .font(.subheadline).foregroundStyle(.secondary)
-                            }
-                        }
-                    }
-                    let newWords = (engine?.learnedKeys ?? []).compactMap { model.content.item($0) }
-                    if !newWords.isEmpty {
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("New in your memory").font(.title3.bold())
-                            ForEach(newWords) { w in
-                                HStack(spacing: 10) {
-                                    SpeakButton(text: w.headword, size: 14)
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(w.headword).font(.headline)
-                                        Text(model.settings.meaning == .turkish ? w.tr : w.def).font(.subheadline).foregroundStyle(.secondary).lineLimit(2)
-                                    }
-                                    Spacer()
-                                }
-                                .padding(10)
-                                .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-                            }
-                        }
-                    }
-                } else {
-                    Text("Your reviews are scheduled for later. Come back tomorrow, or add more decks.")
-                        .multilineTextAlignment(.center).foregroundStyle(.secondary)
-                }
-                Button(action: onDone) { Text("Done") }.buttonStyle(PrimaryButtonStyle())
-            }
-            .padding(24)
-            .frame(maxWidth: 560)
-            .frame(maxWidth: .infinity)
+        return LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 14) {
+            tile("\(reviewed)", "exercises", "square.stack.3d.up.fill", .brandIndigo)
+            tile("\(accuracy)%", "correct", "target", .good)
+            tile("+\(max(0, learned - learnedAtStart))", "words learned", "sparkles", .brandTeal)
+            tile("\(model.progress.streak(now: Date()))", "day streak", "flame.fill", .orange)
         }
+    }
+
+    private var knownPanel: some View {
+        Panel {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("You now know \(learned) words, about \(Int(cov.rounded()))% of everyday English.")
+                    .font(.headline)
+                if cov > coverageAtStart + 0.005 {
+                    Text("+\(String(format: "%.1f", cov - coverageAtStart)) points of everyday English in this session.")
+                        .font(.subheadline).foregroundStyle(Color.brandTeal)
+                }
+                if (engine?.knownByCheck ?? 0) > 0 {
+                    Text("\(engine?.knownByCheck ?? 0) words you already knew were skipped after a quick check.")
+                        .font(.subheadline).foregroundStyle(.secondary)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder private var wordList: some View {
+        let newWords = (engine?.learnedKeys ?? []).compactMap { model.content.item($0) }
+        if !newWords.isEmpty {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("New in your memory").font(.title3.bold())
+                ForEach(newWords) { w in
+                    HStack(spacing: 10) {
+                        SpeakButton(text: w.headword, size: 14)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(w.headword).font(.headline)
+                            Text(model.settings.meaning == .turkish ? w.tr : w.def).font(.subheadline).foregroundStyle(.secondary).lineLimit(2)
+                        }
+                        Spacer()
+                    }
+                    .padding(10)
+                    .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                }
+            }
+        }
+    }
+
+    private var doneButton: some View {
+        Button(action: onDone) { Text("Done") }.buttonStyle(PrimaryButtonStyle())
     }
 
     private func tile(_ v: String, _ label: LocalizedStringKey, _ icon: String, _ color: Color) -> some View {

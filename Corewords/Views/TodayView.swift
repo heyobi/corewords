@@ -175,10 +175,12 @@ struct TodayView: View {
     private var decksSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Your decks").font(.title3.bold()).padding(.top, 6)
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 280), spacing: 14)], spacing: 14) {
-                deckCard(.core, "Core 2,800", "The NGSL: the most frequent words, about 92% of everyday English.", "star.fill", .brandIndigo)
-                deckCard(.extended, "Extended 5,000", "2,200 more words for reading news, books and work email.", "books.vertical.fill", .brandTeal)
-                deckCard(.phrasal, "Phrasal verbs", "205 everyday phrasal verbs like get up, look after, put up with.", "arrow.triangle.branch", .orange)
+            FoldGrid(items: Deck.allCases, minimum: 280, spacing: 14) { deck in
+                switch deck {
+                case .core: deckCard(.core, "Core 2,800", "The NGSL: the most frequent words, about 92% of everyday English.", "star.fill", .brandIndigo)
+                case .extended: deckCard(.extended, "Extended 5,000", "2,200 more words for reading news, books and work email.", "books.vertical.fill", .brandTeal)
+                case .phrasal: deckCard(.phrasal, "Phrasal verbs", "205 everyday phrasal verbs like get up, look after, put up with.", "arrow.triangle.branch", .orange)
+                }
             }
         }
     }

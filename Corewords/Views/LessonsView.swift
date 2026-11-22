@@ -8,16 +8,26 @@ struct LessonsView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Small words, big difference").font(.title3.bold())
-                        Text("The 50 most common English words are mostly function words like the, of, to and in. They make up about half of every text. Each lesson ends with a short quiz.")
-                            .font(.subheadline).foregroundStyle(.secondary)
+                    Adaptive {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Small words, big difference").font(.title3.bold())
+                            Text("The 50 most common English words are mostly function words like the, of, to and in. They make up about half of every text. Each lesson ends with a short quiz.")
+                                .font(.subheadline).foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    } second: {
+                        Color.clear.frame(height: 1)
                     }
                     lessonGrid(model.content.lessons.filter { $0.group != "grammar" })
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Tenses and grammar").font(.title3.bold())
-                        Text("The structures that hold the words together: present, past and future, the present perfect, comparatives, conditionals and more. Short, with examples and a quiz.")
-                            .font(.subheadline).foregroundStyle(.secondary)
+                    Adaptive {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Tenses and grammar").font(.title3.bold())
+                            Text("The structures that hold the words together: present, past and future, the present perfect, comparatives, conditionals and more. Short, with examples and a quiz.")
+                                .font(.subheadline).foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    } second: {
+                        Color.clear.frame(height: 1)
                     }
                     .padding(.top, 6)
                     lessonGrid(model.content.lessons.filter { $0.group == "grammar" })
@@ -39,11 +49,9 @@ struct LessonsView: View {
 
 extension LessonsView {
     func lessonGrid(_ lessons: [Lesson]) -> some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 300), spacing: 12)], spacing: 12) {
-            ForEach(lessons) { lesson in
-                NavigationLink(value: lesson) { LessonTile(lesson: lesson, score: model.progress.lessonScores[lesson.id]) }
-                    .buttonStyle(.plain)
-            }
+        FoldGrid(items: lessons, minimum: 300) { lesson in
+            NavigationLink(value: lesson) { LessonTile(lesson: lesson, score: model.progress.lessonScores[lesson.id]) }
+                .buttonStyle(.plain)
         }
     }
 }

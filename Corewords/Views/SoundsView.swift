@@ -9,14 +9,19 @@ struct SoundsView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
-                    trainerCard
-                    Toggle(isOn: $showHardOnly) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Hard for Turkish speakers").font(.headline)
-                            Text("Sounds Turkish doesn't have, or uses differently").font(.caption).foregroundStyle(.secondary)
+                    Adaptive {
+                        trainerCard
+                    } second: {
+                        Toggle(isOn: $showHardOnly) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Hard for Turkish speakers").font(.headline)
+                                Text("Sounds Turkish doesn't have, or uses differently").font(.caption).foregroundStyle(.secondary)
+                            }
                         }
+                        .tint(.orange)
+                        .padding(16)
+                        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
                     }
-                    .tint(.orange)
                     group("Vowels", "vowel")
                     group("Diphthongs", "diphthong")
                     group("Consonants", "consonant")
@@ -63,8 +68,7 @@ struct SoundsView: View {
         let sounds = model.content.phonetics.sounds.filter { $0.kind == kind && (!showHardOnly || $0.hard) }
         return VStack(alignment: .leading, spacing: 10) {
             if !sounds.isEmpty { Text(title).font(.title3.bold()) }
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 96), spacing: 10)], spacing: 10) {
-                ForEach(sounds) { s in
+            FoldGrid(items: sounds, minimum: 96, spacing: 10) { s in
                     NavigationLink(value: s) {
                         VStack(spacing: 4) {
                             Text("/\(s.ipa)/").font(.system(size: 24, weight: .medium, design: .serif)).foregroundStyle(.primary)
@@ -77,7 +81,6 @@ struct SoundsView: View {
                         }
                     }
                     .buttonStyle(.plain)
-                }
             }
         }
     }
