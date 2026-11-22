@@ -47,6 +47,8 @@ struct Lesson: Codable, Identifiable, Hashable {
         let answer: Int
     }
     let id: String
+    /// "words" (function-word lessons) or "grammar" (tenses and structures).
+    let group: String?
     let title: String
     let titleTr: String
     let words: [String]
@@ -178,21 +180,22 @@ final class ContentStore {
             return ba != bb ? ba < bb : a.rank < b.rank
         }
         var prevCov = 0.0
-        for (i, w) in sorted.enumerated() {
+        for w in sorted {
             let deck: Deck = w.band == "ext" ? .extended : .core
             var share = 0.0
             if w.band != "basic" {
                 share = max(0, w.cov - prevCov)
                 prevCov = w.cov
             }
+            // `order` is the position inside the item's own deck (used to pick distractors of similar frequency).
             let item = StudyItem(key: "w:\(w.id)", deck: deck, headword: w.w, pos: w.pos, tr: w.tr, def: w.def, example: w.ex,
-                                 us: w.us, uk: w.uk, forms: w.forms, order: i, share: share)
+                                 us: w.us, uk: w.uk, forms: w.forms, order: deck == .core ? core.count : ext.count, share: share)
             items[item.key] = item
             if deck == .core { core.append(item) } else { ext.append(item) }
         }
         for p in phrasals {
             let item = StudyItem(key: "p:\(p.id)", deck: .phrasal, headword: p.w, pos: "phr", tr: p.tr, def: p.def, example: p.ex,
-                                 us: p.us, uk: p.uk, forms: [], order: p.id, share: 0)
+                                 us: p.us, uk: p.uk, forms: [], order: phr.count, share: 0)
             items[item.key] = item
             phr.append(item)
         }

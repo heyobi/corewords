@@ -128,8 +128,24 @@ struct TodayView: View {
     private var coverageCard: some View {
         let cov = model.progress.coverage(model.content)
         let known = model.progress.cards.values.filter(\.isLearned).count
+        let today = model.progress.learnedToday(now: Date())
+        let counts = model.progress.counts()
         return Panel {
             VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text("\(known)").font(.rounded(34, .bold)).contentTransition(.numericText())
+                    Text("words you know").font(.headline)
+                    if today > 0 {
+                        Text("+\(today) today").font(.subheadline.weight(.semibold)).foregroundStyle(Color.brandTeal)
+                    }
+                    Spacer()
+                }
+                HStack(spacing: 14) {
+                    Label("\(counts.mastered) mastered", systemImage: "star.fill").foregroundStyle(.orange)
+                    Label("\(counts.learning) learning", systemImage: "circle.lefthalf.filled").foregroundStyle(Color.brandIndigo)
+                }
+                .font(.caption.weight(.semibold))
+                Divider()
                 HStack {
                     Text("Everyday English you can read").font(.headline)
                     Spacer()

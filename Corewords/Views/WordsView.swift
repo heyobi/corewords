@@ -135,6 +135,7 @@ struct WordDetailView: View {
                         POSBadge(pos: item.pos)
                     }
                     IPARow(text: item.headword, us: item.us, uk: item.uk)
+                    SayItButton(listener: model.listener, word: item.headword, forms: item.forms)
                 }
                 Panel {
                     VStack(alignment: .leading, spacing: 10) {

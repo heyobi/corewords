@@ -103,10 +103,13 @@ struct SoundDetailView: View {
                 Text("Examples").font(.headline)
                 ForEach(sound.examples, id: \.w) { ex in
                     Panel {
-                        HStack {
-                            Text(ex.w).font(.rounded(22, .semibold))
-                            Spacer()
-                            IPARow(text: ex.w, us: ex.us, uk: ex.uk, compact: true)
+                        VStack(alignment: .leading, spacing: 10) {
+                            HStack {
+                                Text(ex.w).font(.rounded(22, .semibold))
+                                Spacer()
+                                IPARow(text: ex.w, us: ex.us, uk: ex.uk, compact: true)
+                            }
+                            SayItButton(listener: model.listener, word: ex.w)
                         }
                     }
                 }
@@ -160,6 +163,7 @@ struct MinimalPairsView: View {
     @State private var picked: Bool?
     @State private var right = 0
     @State private var total = 0
+    @State private var sayMode = false
 
     static let freeGroups = 2
 
@@ -172,7 +176,15 @@ struct MinimalPairsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
-                Text("Listen and choose the word you hear. Tap a word afterwards to compare.").font(.subheadline).foregroundStyle(.secondary)
+                Picker("Mode", selection: $sayMode) {
+                    Text("Listen").tag(false)
+                    Text("Speak").tag(true)
+                }
+                .pickerStyle(.segmented)
+                .onChange(of: sayMode) { _, _ in nextPair() }
+                Text(sayMode ? "Say the word shown. On-device speech recognition checks that it heard this word and not its pair."
+                             : "Listen and choose the word you hear. Tap a word afterwards to compare.")
+                    .font(.subheadline).foregroundStyle(.secondary)
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         chip(nil, "All")
@@ -181,7 +193,29 @@ struct MinimalPairsView: View {
                         }
                     }
                 }
-                if let p = current {
+                if let p = current, sayMode {
+                    let target = playedA ? p.a : p.b
+                    let other = playedA ? p.b : p.a
+                    VStack(spacing: 18) {
+                        Text(target.w).font(.rounded(48, .bold))
+                        Text("/\(model.settings.accent == .uk && !target.uk.isEmpty ? target.uk : target.us)/").font(.system(size: 20, design: .serif)).foregroundStyle(.secondary)
+                        Text("not \(other.w)").font(.subheadline).foregroundStyle(.secondary)
+                        HStack(spacing: 12) {
+                            SpeakButton(text: target.w, size: 18)
+                            SpeakButton(text: target.w, size: 15, slow: true)
+                            SpeakButton(text: other.w, size: 13)
+                        }
+                        SayItButton(listener: model.listener, word: target.w, not: other.w) { ok in
+                            total += 1
+                            if ok { right += 1 }
+                        }
+                        .id(p.id + (playedA ? "a" : "b"))
+                        Button { nextPair() } label: { Text("Next pair") }.buttonStyle(PrimaryButtonStyle())
+                        Text("\(right) of \(total) correct").font(.subheadline).foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 10)
+                } else if let p = current {
                     VStack(spacing: 20) {
                         HStack(spacing: 18) {
                             Button { play(p) } label: {
@@ -244,7 +278,7 @@ struct MinimalPairsView: View {
         if pool.count > 1, let c = current, c.id == p.id { p = pool.first { $0.id != c.id } ?? p }
         current = p
         playedA = Bool.random()
-        play(p)
+        if !sayMode { play(p) }
     }
 
     private func play(_ p: Phonetics.Pair) {

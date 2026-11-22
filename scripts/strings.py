@@ -207,6 +207,31 @@ TR = {
         'Corewords, bir kelimeyi nasıl telaffuz ettiğinizi kontrol etmek için cihazınızda dinler. Hiçbir şey kaydedilmez ya da bir yere gönderilmez.',
     'The microphone is used only while you hold the Say It button, to check your pronunciation on this device.':
         'Mikrofon yalnızca Söyle düğmesine basılı tuttuğunuz sürece, telaffuzunuzu bu cihazda kontrol etmek için kullanılır.',
+    # Feedback round 1 (learning flow, Say it, accents, grammar)
+    'I know it': 'Biliyorum', 'Learn it': 'Öğren',
+    'Quick check: what does it mean?': 'Hızlı kontrol: anlamı ne?',
+    'It will come back in a few minutes.': 'Birkaç dakika içinde tekrar gelecek.',
+    'Learned! Next review tomorrow.': 'Öğrenildi! Sonraki tekrar yarın.',
+    'Learned! Next review in %lld days.': 'Öğrenildi! Sonraki tekrar %lld gün sonra.',
+    'Mastered! In your long-term memory now. Next check in %lld days.': 'Ustalaştınız! Artık uzun süreli hafızanızda. Sonraki kontrol %lld gün sonra.',
+    'Stronger memory: next review in %lld days.': 'Hafıza güçlendi: sonraki tekrar %lld gün sonra.',
+    "You know it. Skipped; we'll check it once more in 3 weeks.": 'Biliyorsunuz. Atlandı; 3 hafta sonra bir kez daha kontrol edeceğiz.',
+    "No problem, let's learn it properly.": 'Sorun değil, düzgünce öğrenelim.',
+    'Too easy': 'Çok kolay', 'Shows this word again much later': 'Bu kelimeyi çok daha sonra tekrar gösterir',
+    'words learned': 'öğrenilen kelime', 'New in your memory': 'Hafızanızdaki yeni kelimeler',
+    '+%@ points of everyday English in this session.': 'Bu derste günlük İngilizcede +%@ puan.',
+    '%lld words you already knew were skipped after a quick check.': 'Zaten bildiğiniz %lld kelime hızlı bir kontrolden sonra atlandı.',
+    'words you know': 'bildiğiniz kelime', '+%lld today': 'bugün +%lld',
+    '%lld mastered': '%lld ustalaşıldı', '%lld learning': '%lld öğreniliyor', 'Mastered': 'Ustalaşıldı',
+    'Hold to say it': 'Söylemek için basılı tutun', 'Nothing heard': 'Bir şey duyulmadı',
+    'Allow the microphone and speech recognition in Settings to use Say it.': "Söyle özelliği için Ayarlar'dan mikrofon ve konuşma tanımaya izin verin.",
+    "On-device English speech recognition isn't available on this device yet. In iOS Settings › General › Keyboard, turn on Dictation and add English.":
+        "Cihaz üzerinde İngilizce konuşma tanıma bu cihazda henüz yok. iOS Ayarlar › Genel › Klavye bölümünde Dikte'yi açıp İngilizce ekleyin.",
+    'Show both accents': 'İki aksanı da göster',
+    'Mode': 'Mod', 'Listen': 'Dinle', 'Speak': 'Konuş', 'not %@': '%@ değil',
+    'Tenses and grammar': 'Zamanlar ve dil bilgisi',
+    'The structures that hold the words together: present, past and future, the present perfect, comparatives, conditionals and more. Short, with examples and a quiz.':
+        'Kelimeleri bir arada tutan yapılar: şimdiki, geçmiş ve gelecek zaman, present perfect, karşılaştırmalar, koşul cümleleri ve daha fazlası. Kısa, örnekli ve testli.',
 }
 
 # Literals that are not UI text (symbols, keys, file names, formats, sample sentences spoken aloud).

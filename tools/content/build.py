@@ -97,7 +97,8 @@ def main():
         phrasal.append({'id': len(phrasal) + 1, 'w': p[0], 'tr': p[1], 'def': p[2], 'ex': p[3], 'type': p[4],
                         'us': ipa_for(p[0], us), 'uk': ipa_for(p[0], uk)})
 
-    lessons = json.load(open(AUTH / 'lessons.json', encoding='utf-8'))
+    lessons = [dict(l, group='words') for l in json.load(open(AUTH / 'lessons.json', encoding='utf-8'))]
+    lessons += [dict(l, group='grammar') for l in json.load(open(AUTH / 'lessons_grammar.json', encoding='utf-8'))]
     for l in lessons:
         for q in l['quiz']:
             assert 0 <= q['answer'] < len(q['options']) and '___' in q['q'], (l['id'], q)

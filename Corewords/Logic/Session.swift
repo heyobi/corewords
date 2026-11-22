@@ -48,6 +48,8 @@ final class SessionEngine {
     struct Entry: Equatable {
         let key: String
         var introduced: Bool
+        /// The learner said "I know this": one quick check decides whether the word is skipped or learned.
+        var checking = false
     }
 
     let content: ContentStore
@@ -56,6 +58,9 @@ final class SessionEngine {
     private(set) var correct = 0
     private(set) var wrong = 0
     private(set) var newIntroduced = 0
+    private(set) var knownByCheck = 0
+    /// Items that left the learning steps during this session (newly learned), in order.
+    private(set) var learnedKeys: [String] = []
     let meaning: Settings.Meaning
     let sayItAvailable: Bool
     private var rng: SeededRandom
@@ -91,6 +96,7 @@ final class SessionEngine {
     func current(progress: ProgressData) -> Exercise? {
         guard let e = queue.first, let item = content.item(e.key) else { return nil }
         if !e.introduced { return Exercise(item: item, kind: .intro, options: [], answerIndex: 0) }
+        if e.checking { return make(.wordToMeaning, for: item) }
         let kind = chooseKind(for: progress.state(e.key), item: item)
         return make(kind, for: item)
     }
@@ -103,12 +109,17 @@ final class SessionEngine {
             return .wordToMeaning
         case .learning:
             if s.step == 0 { return Bool.random(using: &rng) ? .wordToMeaning : .listen }
-            return phrasal ? .gapChoice : (Bool.random(using: &rng) ? .meaningToWord : .listen)
+            if phrasal { return .gapChoice }
+            var kinds: [ExerciseKind] = [.meaningToWord, .listen, .gapChoice]
+            if sayItAvailable { kinds.append(.sayIt) }
+            return kinds.randomElement(using: &rng) ?? .meaningToWord
         case .relearning:
             return .meaningToWord
         case .review:
             if s.interval < 4 {
-                return [.gapChoice, .meaningToWord, .listen, .wordToMeaning].randomElement(using: &rng) ?? .gapChoice
+                var kinds: [ExerciseKind] = [.gapChoice, .meaningToWord, .listen, .typeWord]
+                if sayItAvailable && !phrasal { kinds.append(.sayIt) }
+                return kinds.randomElement(using: &rng) ?? .gapChoice
             }
             var kinds: [ExerciseKind] = [.typeWord, .typeWord, .gapChoice, .meaningToWord]
             if sayItAvailable && !phrasal { kinds.append(.sayIt) }
@@ -147,7 +158,8 @@ final class SessionEngine {
     func distractors(for item: StudyItem, count: Int, similarSpelling: Bool = false) -> [StudyItem] {
         let pool = content.ordered[item.deck] ?? []
         let window = 250
-        let lo = max(0, item.order - window), hi = min(pool.count, item.order + window)
+        let idx = min(max(0, item.order), pool.count)
+        let lo = max(0, idx - window), hi = max(lo, min(pool.count, idx + window))
         var candidates = Array(pool[lo..<hi]).filter {
             $0.key != item.key && $0.tr != item.tr && $0.def != item.def && $0.headword.lowercased() != item.headword.lowercased()
                 && $0.answer.lowercased() != item.answer.lowercased()
@@ -175,10 +187,42 @@ final class SessionEngine {
         newIntroduced += 1
     }
 
-    /// Removes the item at the front without practicing it (e.g. "I already know this").
+    /// Removes the item at the front without practicing it.
     func skipCurrent() {
         guard !queue.isEmpty else { return }
         queue.removeFirst()
+    }
+
+    /// "I know this word": test it once instead of teaching it.
+    func startKnownCheck() {
+        guard !queue.isEmpty else { return }
+        queue[0].introduced = true
+        queue[0].checking = true
+    }
+
+    /// Whether the exercise on screen is a known-word check.
+    var isChecking: Bool { queue.first?.checking ?? false }
+
+    /// Result of a known-word check: passed words leave the session; failed ones are taught from the start.
+    func checked(passed: Bool) {
+        guard !queue.isEmpty else { return }
+        reviewed += 1
+        if passed {
+            correct += 1
+            knownByCheck += 1
+            queue.removeFirst()
+        } else {
+            wrong += 1
+            var e = queue.removeFirst()
+            e.checking = false
+            e.introduced = false
+            queue.insert(e, at: min(1, queue.count))
+        }
+    }
+
+    /// Takes an item out of this session (e.g. after "Too easy").
+    func remove(_ key: String) {
+        queue.removeAll { $0.key == key }
     }
 
     /// Records the result of the current exercise and requeues the item if it is still being learned.
@@ -187,6 +231,7 @@ final class SessionEngine {
         let entry = queue.removeFirst()
         reviewed += 1
         if grade == .again { wrong += 1 } else { correct += 1 }
+        if newState.status == .review && newState.reps <= 3 && !learnedKeys.contains(entry.key) { learnedKeys.append(entry.key) }
         switch newState.status {
         case .learning, .relearning:
             // Come back after a few other items (sooner after a mistake), within this session.
@@ -233,10 +278,18 @@ enum AnswerCheck {
 
     /// Whether recognized speech contains the word (or one of its forms).
     static func spoken(_ transcript: String, matches item: StudyItem) -> Bool {
-        let words = Set(normalize(transcript).split(separator: " ").map(String.init))
-        let wanted = ([item.headword] + item.forms).map(normalize)
-        return wanted.contains { w in
-            w.contains(" ") ? normalize(transcript).contains(w) : words.contains(w)
+        heard(transcript, word: item.headword, forms: item.forms)
+    }
+
+    /// Whether `word` (or a form) was heard, and `not` (the other word of a minimal pair) wasn't.
+    static func heard(_ transcript: String, word: String, forms: [String] = [], not: String? = nil) -> Bool {
+        let t = normalize(transcript)
+        let words = Set(t.split(separator: " ").map(String.init))
+        func has(_ w: String) -> Bool {
+            let n = normalize(w)
+            return n.contains(" ") ? t.contains(n) : words.contains(n)
         }
+        if let not, has(not) { return false }
+        return ([word] + forms).contains(where: has)
     }
 }

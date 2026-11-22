@@ -21,12 +21,32 @@
         }
       }
     },
+    "%lld learning": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld öğreniliyor"
+          }
+        }
+      }
+    },
     "%lld left": {
       "localizations": {
         "tr": {
           "stringUnit": {
             "state": "translated",
             "value": "%lld kaldı"
+          }
+        }
+      }
+    },
+    "%lld mastered": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ustalaşıldı"
           }
         }
       }
@@ -101,6 +121,16 @@
         }
       }
     },
+    "%lld words you already knew were skipped after a quick check.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zaten bildiğiniz %lld kelime hızlı bir kontrolden sonra atlandı."
+          }
+        }
+      }
+    },
     "%lld%%": {
       "localizations": {
         "tr": {
@@ -127,6 +157,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld günlük seri"
+          }
+        }
+      }
+    },
+    "+%@ points of everyday English in this session.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu derste günlük İngilizcede +%@ puan."
+          }
+        }
+      }
+    },
+    "+%lld today": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bugün +%lld"
           }
         }
       }
@@ -337,6 +387,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bugünlük bu kadar"
+          }
+        }
+      }
+    },
+    "Allow the microphone and speech recognition in Settings to use Say it.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Söyle özelliği için Ayarlar'dan mikrofon ve konuşma tanımaya izin verin."
           }
         }
       }
@@ -931,6 +991,16 @@
         }
       }
     },
+    "Hold to say it": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Söylemek için basılı tutun"
+          }
+        }
+      }
+    },
     "Hold to speak": {
       "localizations": {
         "tr": {
@@ -991,6 +1061,16 @@
         }
       }
     },
+    "I know it": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Biliyorum"
+          }
+        }
+      }
+    },
     "I know this word": {
       "localizations": {
         "tr": {
@@ -1007,6 +1087,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Yeni başlıyorum, ilk kelimeden başla"
+          }
+        }
+      }
+    },
+    "It will come back in a few minutes.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Birkaç dakika içinde tekrar gelecek."
           }
         }
       }
@@ -1061,6 +1151,16 @@
         }
       }
     },
+    "Learn it": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öğren"
+          }
+        }
+      }
+    },
     "Learn the English words you'll actually meet, most useful first.": {
       "localizations": {
         "tr": {
@@ -1087,6 +1187,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öğrenildi · sonraki tekrar %1$lld gün sonra (aralık %2$lld gün)"
+          }
+        }
+      }
+    },
+    "Learned! Next review in %lld days.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öğrenildi! Sonraki tekrar %lld gün sonra."
+          }
+        }
+      }
+    },
+    "Learned! Next review tomorrow.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öğrenildi! Sonraki tekrar yarın."
           }
         }
       }
@@ -1131,6 +1251,16 @@
         }
       }
     },
+    "Listen": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dinle"
+          }
+        }
+      }
+    },
     "Listen and choose the word you hear. Tap a word afterwards to compare.": {
       "localizations": {
         "tr": {
@@ -1157,6 +1287,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Biliniyor olarak işaretlendi"
+          }
+        }
+      }
+    },
+    "Mastered": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ustalaşıldı"
+          }
+        }
+      }
+    },
+    "Mastered! In your long-term memory now. Next check in %lld days.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ustalaştınız! Artık uzun süreli hafızanızda. Sonraki kontrol %lld gün sonra."
           }
         }
       }
@@ -1201,12 +1351,32 @@
         }
       }
     },
+    "Mode": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mod"
+          }
+        }
+      }
+    },
     "New": {
       "localizations": {
         "tr": {
           "stringUnit": {
             "state": "translated",
             "value": "Yeni"
+          }
+        }
+      }
+    },
+    "New in your memory": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hafızanızdaki yeni kelimeler"
           }
         }
       }
@@ -1271,6 +1441,16 @@
         }
       }
     },
+    "No problem, let's learn it properly.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sorun değil, düzgünce öğrenelim."
+          }
+        }
+      }
+    },
     "Not a beginner?": {
       "localizations": {
         "tr": {
@@ -1311,6 +1491,16 @@
         }
       }
     },
+    "Nothing heard": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bir şey duyulmadı"
+          }
+        }
+      }
+    },
     "Nothing to study right now": {
       "localizations": {
         "tr": {
@@ -1327,6 +1517,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tamam"
+          }
+        }
+      }
+    },
+    "On-device English speech recognition isn't available on this device yet. In iOS Settings › General › Keyboard, turn on Dictation and add English.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cihaz üzerinde İngilizce konuşma tanıma bu cihazda henüz yok. iOS Ayarlar › Genel › Klavye bölümünde Dikte'yi açıp İngilizce ekleyin."
           }
         }
       }
@@ -1477,6 +1677,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Telaffuz çalıştırıcı"
+          }
+        }
+      }
+    },
+    "Quick check: what does it mean?": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hızlı kontrol: anlamı ne?"
           }
         }
       }
@@ -1641,6 +1851,16 @@
         }
       }
     },
+    "Show both accents": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İki aksanı da göster"
+          }
+        }
+      }
+    },
     "Show fewer": {
       "localizations": {
         "tr": {
@@ -1667,6 +1887,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cevabı göster"
+          }
+        }
+      }
+    },
+    "Shows this word again much later": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu kelimeyi çok daha sonra tekrar gösterir"
           }
         }
       }
@@ -1741,6 +1971,16 @@
         }
       }
     },
+    "Speak": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konuş"
+          }
+        }
+      }
+    },
     "Speaking speed": {
       "localizations": {
         "tr": {
@@ -1791,6 +2031,16 @@
         }
       }
     },
+    "Stronger memory: next review in %lld days.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hafıza güçlendi: sonraki tekrar %lld gün sonra."
+          }
+        }
+      }
+    },
     "Study phrasal verbs": {
       "localizations": {
         "tr": {
@@ -1837,6 +2087,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bu desteyi günlük derse eklemek ya da çıkarmak için dokunun"
+          }
+        }
+      }
+    },
+    "Tenses and grammar": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zamanlar ve dil bilgisi"
           }
         }
       }
@@ -1941,6 +2201,16 @@
         }
       }
     },
+    "The structures that hold the words together: present, past and future, the present perfect, comparatives, conditionals and more. Short, with examples and a quiz.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kelimeleri bir arada tutan yapılar: şimdiki, geçmiş ve gelecek zaman, present perfect, karşılaştırmalar, koşul cümleleri ve daha fazlası. Kısa, örnekli ve testli."
+          }
+        }
+      }
+    },
     "Time": {
       "localizations": {
         "tr": {
@@ -1977,6 +2247,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bugün"
+          }
+        }
+      }
+    },
+    "Too easy": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Çok kolay"
           }
         }
       }
@@ -2261,6 +2541,16 @@
         }
       }
     },
+    "You know it. Skipped; we'll check it once more in 3 weeks.": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Biliyorsunuz. Atlandı; 3 hafta sonra bir kez daha kontrol edeceğiz."
+          }
+        }
+      }
+    },
     "You know the words in 95% of everyday English!": {
       "localizations": {
         "tr": {
@@ -2501,6 +2791,16 @@
         }
       }
     },
+    "not %@": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ değil"
+          }
+        }
+      }
+    },
     "noun": {
       "localizations": {
         "tr": {
@@ -2607,6 +2907,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "kelime"
+          }
+        }
+      }
+    },
+    "words learned": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "öğrenilen kelime"
+          }
+        }
+      }
+    },
+    "words you know": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "bildiğiniz kelime"
           }
         }
       }

@@ -27,6 +27,8 @@ struct Settings: Codable, Equatable {
     var decks: [Deck] = [.core]
     var sound = true
     var haptics = true
+    /// Show and play both accents next to every word (otherwise only the chosen accent, with a slow button).
+    var showBothAccents = false
 
     static var defaultMeaning: Meaning {
         let lang = Locale.preferredLanguages.first ?? "en"
@@ -52,6 +54,7 @@ struct Settings: Codable, Equatable {
         decks = (try? c.decode([Deck].self, forKey: .decks)) ?? d.decks
         sound = (try? c.decode(Bool.self, forKey: .sound)) ?? d.sound
         haptics = (try? c.decode(Bool.self, forKey: .haptics)) ?? d.haptics
+        showBothAccents = (try? c.decode(Bool.self, forKey: .showBothAccents)) ?? d.showBothAccents
     }
 }
 
@@ -103,6 +106,76 @@ struct ProgressData: Codable, Equatable {
         for k in keys where !state(k).isStarted || state(k).status == .known {
             cards[k] = SRS.markKnown(state(k), now: now)
         }
+    }
+
+    /// Days after which a passed "I know this" check comes back once to confirm it.
+    static let knownCheckInterval: Double = 21
+
+    /// The learner said they know a new word and picked the right meaning: skip the learning steps and check it
+    /// again in three weeks. If that check passes too, the interval grows quickly and the word is mastered.
+    mutating func passKnownCheck(_ key: String, now: Date, calendar: Calendar = .current) {
+        var s = state(key)
+        s.status = .review
+        s.step = 0
+        s.interval = Self.knownCheckInterval
+        s.ease = 2.7
+        s.reps += 1
+        s.correct += 1
+        s.lastReview = now
+        s.firstSeen = s.firstSeen ?? now
+        s.due = SRS.dueDate(after: SRS.fuzz(s.interval, key: key), from: now, calendar: calendar)
+        cards[key] = s
+        let dk = Self.dayKey(now, calendar: calendar)
+        var log = days[dk] ?? DayLog()
+        log.answers += 1
+        log.correct += 1
+        days[dk] = log
+    }
+
+    /// Replaces the last answer's "good" with "easy" (the learner tapped "Too easy").
+    mutating func upgradeToEasy(_ key: String, previous: CardState, now: Date, calendar: Calendar = .current) {
+        var n = SRS.schedule(previous, grade: .easy, now: now, key: key, calendar: calendar)
+        let cur = state(key)
+        n.reps = cur.reps
+        n.correct = cur.correct
+        n.wrong = cur.wrong
+        cards[key] = n
+    }
+
+    /// Words with a review interval of three weeks or more, or marked known: long-term memory.
+    static let masteredInterval: Double = 21
+
+    func isMastered(_ s: CardState) -> Bool {
+        s.status == .known || (s.status == .review && s.interval >= Self.masteredInterval)
+    }
+
+    struct Counts: Equatable {
+        var learning = 0
+        var learned = 0  // graduated but not yet mastered
+        var mastered = 0
+        var known: Int { learned + mastered }
+    }
+
+    func counts(in items: [StudyItem]? = nil) -> Counts {
+        var c = Counts()
+        let states: [CardState] = items.map { $0.map { state($0.key) } } ?? Array(cards.values)
+        for s in states {
+            switch s.status {
+            case .learning, .relearning: c.learning += 1
+            case .review, .known: if isMastered(s) { c.mastered += 1 } else { c.learned += 1 }
+            case .new: break
+            }
+        }
+        return c
+    }
+
+    /// Words learned for the first time today (graduated or checked as known).
+    func learnedToday(now: Date, calendar: Calendar = .current) -> Int {
+        let start = SRS.studyDay(now, calendar: calendar)
+        return cards.values.filter { s in
+            guard s.status == .review, let first = s.firstSeen else { return false }
+            return first >= start
+        }.count
     }
 
     /// Days in a row (ending today, or yesterday if today isn't done yet) on which the daily goal was met.

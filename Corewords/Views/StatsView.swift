@@ -159,8 +159,9 @@ struct StatsView: View {
             VStack(alignment: .leading, spacing: 14) {
                 Text("By frequency").font(.headline)
                 ForEach(bands) { b in
-                    let learned = model.progress.learnedCount(in: b.items)
-                    let learning = b.items.filter { let s = model.progress.state($0.key); return s.status == .learning || s.status == .relearning }.count
+                    let c = model.progress.counts(in: b.items)
+                    let learned = c.known
+                    let learning = c.learning
                     VStack(alignment: .leading, spacing: 6) {
                         HStack {
                             Text(b.title).font(.subheadline.weight(.semibold))
@@ -170,8 +171,9 @@ struct StatsView: View {
                         GeometryReader { g in
                             let total = Double(max(1, b.items.count))
                             HStack(spacing: 0) {
-                                Rectangle().fill(Color.good).frame(width: g.size.width * Double(learned) / total)
-                                Rectangle().fill(Color.orange).frame(width: g.size.width * Double(learning) / total)
+                                Rectangle().fill(Color.orange).frame(width: g.size.width * Double(c.mastered) / total)
+                                Rectangle().fill(Color.good).frame(width: g.size.width * Double(c.learned) / total)
+                                Rectangle().fill(Color.brandIndigo.opacity(0.6)).frame(width: g.size.width * Double(learning) / total)
                                 Rectangle().fill(Color.secondary.opacity(0.15))
                             }
                             .clipShape(Capsule())
@@ -180,8 +182,9 @@ struct StatsView: View {
                     }
                 }
                 HStack(spacing: 14) {
+                    Label("Mastered", systemImage: "circle.fill").foregroundStyle(.orange)
                     Label("Learned", systemImage: "circle.fill").foregroundStyle(Color.good)
-                    Label("Learning", systemImage: "circle.fill").foregroundStyle(.orange)
+                    Label("Learning", systemImage: "circle.fill").foregroundStyle(Color.brandIndigo.opacity(0.6))
                 }
                 .font(.caption)
             }

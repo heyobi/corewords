@@ -42,9 +42,10 @@ final class Speaker: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
         if synth.isSpeaking { synth.stopSpeaking(at: .immediate) }
         let u = AVSpeechUtterance(string: text)
         u.voice = voice(for: accent)
-        let r = slow ? rate * 0.6 : rate
+        // Slow is clearly slower: about a third of the normal rate, with a short pause before it starts.
+        let r = slow ? max(0.04, rate * 0.3) : rate
         u.rate = Float(AVSpeechUtteranceMinimumSpeechRate + (AVSpeechUtteranceMaximumSpeechRate - AVSpeechUtteranceMinimumSpeechRate) * Float(r))
-        u.preUtteranceDelay = 0.02
+        u.preUtteranceDelay = slow ? 0.15 : 0.02
         speaking = true
         synth.speak(u)
     }

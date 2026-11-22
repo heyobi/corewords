@@ -43,6 +43,7 @@ struct SettingsView: View {
                         Text("American (US)").tag(Settings.Accent.us)
                         Text("British (UK)").tag(Settings.Accent.uk)
                     }
+                    Toggle("Show both accents", isOn: Binding(get: { model.settings.showBothAccents }, set: { model.settings.showBothAccents = $0 }))
                     VStack(alignment: .leading) {
                         Text("Speaking speed")
                         Slider(value: Binding(get: { model.settings.speechRate }, set: { model.settings.speechRate = $0 }), in: 0.25...0.6) {

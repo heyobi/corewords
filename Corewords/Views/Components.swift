@@ -48,7 +48,7 @@ struct SecondaryButtonStyle: ButtonStyle {
     }
 }
 
-/// A speaker button that reads the text aloud (US or UK voice).
+/// A speaker button that reads the text aloud (US or UK voice). The tap target is at least 44 pt.
 struct SpeakButton: View {
     @EnvironmentObject var model: AppModel
     let text: String
@@ -62,8 +62,9 @@ struct SpeakButton: View {
         } label: {
             Image(systemName: slow ? "tortoise.fill" : "speaker.wave.2.fill")
                 .font(.system(size: size, weight: .semibold))
-                .frame(width: size * 2, height: size * 2)
+                .frame(width: max(44, size * 2.2), height: max(44, size * 2.2))
                 .background(Color.accentColor.opacity(0.12), in: Circle())
+                .contentShape(Circle().inset(by: -6))
         }
         .buttonStyle(.plain)
         .foregroundStyle(Color.accentColor)
@@ -71,28 +72,110 @@ struct SpeakButton: View {
     }
 }
 
-/// US and UK transcriptions, each with its own play button.
+/// The word's IPA with play and slow-play buttons. Shows only the learner's accent unless "both accents" is on.
 struct IPARow: View {
+    @EnvironmentObject var model: AppModel
     let text: String
     let us: String
     let uk: String
     var compact = false
 
     var body: some View {
-        HStack(spacing: compact ? 10 : 14) {
-            if !us.isEmpty { one("US", us, .us) }
-            if !uk.isEmpty && uk != us { one("UK", uk, .uk) }
-            if !uk.isEmpty && uk == us { one("US · UK", us, .us) }
+        let accent = model.settings.accent
+        if model.settings.showBothAccents {
+            HStack(spacing: compact ? 10 : 14) {
+                if !us.isEmpty { one("US", us, .us, slow: false) }
+                if !uk.isEmpty && uk != us { one("UK", uk, .uk, slow: false) }
+            }
+        } else {
+            let ipa = accent == .uk && !uk.isEmpty ? uk : us
+            HStack(spacing: 10) {
+                SpeakButton(text: text, accent: accent, size: compact ? 15 : 18)
+                SpeakButton(text: text, accent: accent, size: compact ? 13 : 15, slow: true)
+                if !ipa.isEmpty {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text(accent == .us ? "US" : "UK").font(.caption2.weight(.semibold)).foregroundStyle(.secondary)
+                        Text("/\(ipa)/").font(.system(size: compact ? 16 : 19, design: .serif)).textSelection(.enabled)
+                    }
+                }
+            }
         }
     }
 
-    private func one(_ label: LocalizedStringKey, _ ipa: String, _ accent: Settings.Accent) -> some View {
+    private func one(_ label: LocalizedStringKey, _ ipa: String, _ accent: Settings.Accent, slow: Bool) -> some View {
         HStack(spacing: 6) {
             SpeakButton(text: text, accent: accent, size: compact ? 13 : 15)
             VStack(alignment: .leading, spacing: 0) {
                 Text(label).font(.caption2.weight(.semibold)).foregroundStyle(.secondary)
                 Text("/\(ipa)/").font(.system(size: compact ? 15 : 17, design: .serif))
                     .textSelection(.enabled)
+            }
+        }
+    }
+}
+
+/// Hold to say a word; on-device speech recognition says whether it was understood. Used outside graded
+/// exercises: on new-word cards, word pages and in the Sounds tab. Part of Pro.
+struct SayItButton: View {
+    @EnvironmentObject var model: AppModel
+    @ObservedObject var listener: Listener
+    let word: String
+    var forms: [String] = []
+    /// A word that must NOT be heard (minimal pairs: say "ship", not "sheep").
+    var not: String? = nil
+    var onResult: ((Bool) -> Void)? = nil
+    @State private var holding = false
+    @State private var result: Bool?
+    @State private var heard = ""
+
+    var body: some View {
+        HStack(spacing: 10) {
+            if !model.store.isPro {
+                Button { model.showPaywall = true } label: {
+                    Label("Say it", systemImage: "mic.fill").font(.subheadline.weight(.semibold))
+                        .padding(.horizontal, 14).frame(minHeight: 44)
+                        .background(Color.accentColor.opacity(0.1), in: Capsule())
+                }
+                .buttonStyle(.plain).foregroundStyle(Color.accentColor)
+                ProBadge()
+            } else if listener.state == .denied || listener.state == .unavailable {
+                Text(listener.state == .denied ? "Allow the microphone and speech recognition in Settings to use Say it."
+                     : "On-device English speech recognition isn't available on this device yet. In iOS Settings › General › Keyboard, turn on Dictation and add English.")
+                    .font(.caption).foregroundStyle(.secondary)
+            } else {
+                Label(holding ? "Listening…" : "Hold to say it", systemImage: holding ? "waveform" : "mic.fill")
+                    .font(.subheadline.weight(.semibold))
+                    .padding(.horizontal, 16).frame(minHeight: 44)
+                    .background(Color.accentColor.opacity(holding ? 0.25 : 0.1), in: Capsule())
+                    .foregroundStyle(Color.accentColor)
+                    .symbolEffect(.variableColor.iterative, isActive: holding)
+                    .gesture(DragGesture(minimumDistance: 0)
+                        .onChanged { _ in
+                            guard !holding else { return }
+                            holding = true
+                            result = nil
+                            model.speaker.stop()
+                            Task { await listener.start(accent: model.settings.accent) }
+                        }
+                        .onEnded { _ in
+                            holding = false
+                            Task {
+                                try? await Task.sleep(for: .milliseconds(600))
+                                heard = listener.transcript
+                                listener.stop()
+                                let ok = AnswerCheck.heard(heard, word: word, forms: forms, not: not)
+                                result = ok
+                                if ok { Haptics.success(model.settings.haptics) } else { Haptics.error(model.settings.haptics) }
+                                onResult?(ok)
+                            }
+                        })
+                    .accessibilityLabel(Text("Hold to say it"))
+                if let result {
+                    Image(systemName: result ? "checkmark.circle.fill" : "xmark.circle.fill")
+                        .foregroundStyle(result ? Color.good : Color.bad).font(.title3)
+                    Text(heard.isEmpty ? String(localized: "Nothing heard") : "\"\(heard)\"")
+                        .font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                }
             }
         }
     }

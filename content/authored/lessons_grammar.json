@@ -1,0 +1,238 @@
+[
+  {
+    "id": "present-simple",
+    "title": "Present simple",
+    "titleTr": "Geniş zaman",
+    "words": ["do", "does"],
+    "intro": "Use the present simple for habits, routines and things that are always true. Add -s for he, she and it.",
+    "introTr": "Alışkanlıklar, rutinler ve her zaman doğru olan şeyler için kullanılır. he/she/it ile fiile -s eklenir; Türkçe konuşanların en sık unuttuğu ek budur.",
+    "points": [
+      {"en": "Habits and routines", "tr": "Alışkanlıklar ve rutinler", "examples": [["I get up at seven.", "Yedide kalkarım."], ["She drinks tea every morning.", "Her sabah çay içer."]]},
+      {"en": "Facts and general truths", "tr": "Gerçekler ve genel doğrular", "examples": [["Water boils at 100 degrees.", "Su 100 derecede kaynar."]]},
+      {"en": "he / she / it + -s (-es after s, sh, ch, x, o)", "tr": "he/she/it + -s (s, sh, ch, x, o'dan sonra -es)", "examples": [["He works. She watches. It goes.", "Çalışır. İzler. Gider."]]},
+      {"en": "Questions and negatives with do / does", "tr": "Soru ve olumsuzda do/does", "examples": [["Does she live here? No, she doesn't.", "Burada mı oturuyor? Hayır."]]},
+      {"en": "Often with always, usually, often, sometimes, never", "tr": "Sıklık zarflarıyla sık kullanılır", "examples": [["I never eat meat.", "Asla et yemem."]]}
+    ],
+    "quiz": [
+      {"q": "My brother ___ in a bank.", "options": ["work", "works", "is work"], "answer": 1},
+      {"q": "___ you speak French?", "options": ["Do", "Does", "Are"], "answer": 0},
+      {"q": "She ___ coffee. She prefers tea.", "options": ["don't like", "doesn't like", "not likes"], "answer": 1},
+      {"q": "The sun ___ in the east.", "options": ["rise", "rises", "is rise"], "answer": 1}
+    ]
+  },
+  {
+    "id": "present-continuous",
+    "title": "Present continuous",
+    "titleTr": "Şimdiki zaman",
+    "words": ["is", "-ing"],
+    "intro": "Use am/is/are + verb-ing for actions happening now or around now, and for fixed future plans.",
+    "introTr": "Şu anda ya da bu aralar olan şeyler ve kesinleşmiş gelecek planları için am/is/are + fiil-ing kullanılır. Türkçedeki -yor ekine benzer ama İngilizcede \"know, like, want\" gibi durum fiilleriyle kullanılmaz.",
+    "points": [
+      {"en": "Happening now", "tr": "Şu anda oluyor", "examples": [["I'm reading a book.", "Kitap okuyorum."], ["Look! It's raining.", "Bak! Yağmur yağıyor."]]},
+      {"en": "Temporary situations", "tr": "Geçici durumlar", "examples": [["She's living with her parents this year.", "Bu yıl ailesiyle yaşıyor."]]},
+      {"en": "Fixed future plans", "tr": "Kesinleşmiş gelecek planları", "examples": [["We're meeting Ali tomorrow.", "Yarın Ali ile buluşuyoruz."]]},
+      {"en": "Not with state verbs: know, like, want, need, believe", "tr": "Durum fiilleriyle kullanılmaz", "examples": [["I know the answer. (not I'm knowing)", "Cevabı biliyorum."]]}
+    ],
+    "quiz": [
+      {"q": "Be quiet! The baby ___.", "options": ["sleeps", "is sleeping", "sleep"], "answer": 1},
+      {"q": "I ___ what you mean.", "options": ["understand", "am understanding", "understanding"], "answer": 0},
+      {"q": "What ___ you doing right now?", "options": ["do", "are", "is"], "answer": 1},
+      {"q": "We ___ to Antalya next week. The tickets are booked.", "options": ["fly", "are flying", "flies"], "answer": 1}
+    ]
+  },
+  {
+    "id": "past-simple",
+    "title": "Past simple",
+    "titleTr": "Geçmiş zaman",
+    "words": ["did", "-ed"],
+    "intro": "Use the past simple for finished actions at a finished time. Regular verbs add -ed; many common verbs are irregular.",
+    "introTr": "Bitmiş bir zamanda bitmiş eylemler için kullanılır. Düzenli fiillere -ed eklenir; en sık kullanılan fiillerin çoğu düzensizdir (go → went).",
+    "points": [
+      {"en": "Regular verbs: + -ed", "tr": "Düzenli fiiller: + -ed", "examples": [["I worked late yesterday.", "Dün geç saate kadar çalıştım."]]},
+      {"en": "Common irregular verbs", "tr": "Sık düzensiz fiiller", "examples": [["go → went, see → saw, have → had, make → made, get → got, take → took", "gitti, gördü, sahipti, yaptı, aldı, aldı"]]},
+      {"en": "Questions and negatives: did + base verb", "tr": "Soru ve olumsuz: did + yalın fiil", "examples": [["Did you see the match? I didn't see it.", "Maçı gördün mü? Görmedim."]]},
+      {"en": "Time words: yesterday, last week, ago, in 2020", "tr": "Zaman sözcükleri", "examples": [["We met three years ago.", "Üç yıl önce tanıştık."]]}
+    ],
+    "quiz": [
+      {"q": "I ___ to Izmir last summer.", "options": ["go", "went", "gone"], "answer": 1},
+      {"q": "___ you call your mother yesterday?", "options": ["Do", "Did", "Were"], "answer": 1},
+      {"q": "She didn't ___ the email.", "options": ["read", "readed", "reads"], "answer": 0},
+      {"q": "They ___ a new car two weeks ago.", "options": ["buy", "bought", "buyed"], "answer": 1}
+    ]
+  },
+  {
+    "id": "past-continuous",
+    "title": "Past continuous",
+    "titleTr": "Geçmişte süren eylem",
+    "words": ["was", "were"],
+    "intro": "Use was/were + verb-ing for an action in progress at a moment in the past, often interrupted by a shorter action.",
+    "introTr": "Geçmişte belli bir anda sürmekte olan eylem için was/were + fiil-ing kullanılır; çoğu zaman kısa bir eylem onu böler (-yordu).",
+    "points": [
+      {"en": "In progress at a past time", "tr": "Geçmişte belli bir anda sürüyordu", "examples": [["At eight o'clock I was having dinner.", "Saat sekizde akşam yemeği yiyordum."]]},
+      {"en": "Interrupted by the past simple (when)", "tr": "Geçmiş zamanla bölünen eylem (when)", "examples": [["I was walking home when it started to rain.", "Eve yürüyordum, yağmur başladı."]]},
+      {"en": "Two actions at the same time (while)", "tr": "Aynı anda iki eylem (while)", "examples": [["While she was cooking, he was cleaning.", "O yemek yaparken o da temizlik yapıyordu."]]}
+    ],
+    "quiz": [
+      {"q": "I ___ TV when you called.", "options": ["watched", "was watching", "am watching"], "answer": 1},
+      {"q": "They ___ football at 5 pm yesterday.", "options": ["were playing", "was playing", "played"], "answer": 0},
+      {"q": "While I was sleeping, someone ___ my car.", "options": ["was stealing", "stole", "steals"], "answer": 1}
+    ]
+  },
+  {
+    "id": "present-perfect",
+    "title": "Present perfect",
+    "titleTr": "Present perfect (yakın geçmiş)",
+    "words": ["have", "has"],
+    "intro": "Use have/has + past participle for experiences, for past actions with a result now, and for situations that started in the past and continue.",
+    "introTr": "Deneyimler, sonucu şimdi önemli olan geçmiş eylemler ve geçmişte başlayıp süren durumlar için have/has + üçüncü hâl kullanılır. Belirli bir geçmiş zamanla (yesterday, in 2020) kullanılmaz; bu Türkçe konuşanların en sık hatasıdır.",
+    "points": [
+      {"en": "Experience: ever / never", "tr": "Deneyim: ever / never", "examples": [["Have you ever been to London?", "Hiç Londra'ya gittin mi?"], ["I've never eaten sushi.", "Hiç suşi yemedim."]]},
+      {"en": "Result now: just / already / yet", "tr": "Şimdiki sonuç: just / already / yet", "examples": [["I've lost my keys. (I can't find them now)", "Anahtarlarımı kaybettim."], ["Have you finished yet?", "Bitirdin mi?"]]},
+      {"en": "Started in the past and still true: for / since", "tr": "Geçmişte başlayıp süren: for / since", "examples": [["I've lived here for ten years.", "On yıldır burada yaşıyorum."], ["She's worked here since 2019.", "2019'dan beri burada çalışıyor."]]},
+      {"en": "Not with a finished time", "tr": "Bitmiş bir zamanla kullanılmaz", "examples": [["I saw him yesterday. (not I've seen him yesterday)", "Onu dün gördüm."]]}
+    ],
+    "quiz": [
+      {"q": "I ___ this film three times.", "options": ["saw", "have seen", "see"], "answer": 1},
+      {"q": "We have known each other ___ 2015.", "options": ["for", "since", "ago"], "answer": 1},
+      {"q": "She ___ to Paris last year.", "options": ["has gone", "went", "has been"], "answer": 1},
+      {"q": "Have you done your homework ___?", "options": ["yet", "already", "ago"], "answer": 0}
+    ]
+  },
+  {
+    "id": "future-forms",
+    "title": "Talking about the future",
+    "titleTr": "Gelecekten söz etmek",
+    "words": ["will", "going"],
+    "intro": "English has no single future tense. Choose by meaning: will for decisions and predictions, going to for plans and evidence, present continuous for arrangements.",
+    "introTr": "İngilizcede tek bir gelecek zaman yoktur. Anlama göre seçilir: anlık karar ve tahmin için will, plan ve kanıta dayalı tahmin için going to, ayarlanmış randevular için şimdiki zaman.",
+    "points": [
+      {"en": "will: decisions now, promises, opinions about the future", "tr": "will: anlık karar, söz, görüş", "examples": [["I think it will be hot tomorrow.", "Bence yarın sıcak olacak."]]},
+      {"en": "going to: plans and what you can see coming", "tr": "going to: planlar ve görünen gelecek", "examples": [["I'm going to study medicine.", "Tıp okuyacağım."], ["Watch out! You're going to fall!", "Dikkat! Düşeceksin!"]]},
+      {"en": "Present continuous: arrangements with a time", "tr": "Şimdiki zaman: zamanı belli randevular", "examples": [["I'm seeing the doctor at four.", "Saat dörtte doktora gidiyorum."]]},
+      {"en": "Present simple: timetables", "tr": "Geniş zaman: tarifeler", "examples": [["The train leaves at 6:15.", "Tren 6.15'te kalkıyor."]]}
+    ],
+    "quiz": [
+      {"q": "\"We have no milk.\" \"OK, I ___ buy some.\"", "options": ["will", "am going to", "buy"], "answer": 0},
+      {"q": "My flight ___ at 9 tomorrow morning.", "options": ["leaves", "will leaving", "is leave"], "answer": 0},
+      {"q": "Look at the sky. It ___ snow.", "options": ["will", "is going to", "goes to"], "answer": 1}
+    ]
+  },
+  {
+    "id": "comparatives",
+    "title": "Comparatives and superlatives",
+    "titleTr": "Karşılaştırma ve en üstünlük",
+    "words": ["than", "most"],
+    "intro": "Short adjectives add -er / -est; long ones use more / most. Use than after a comparative and the before a superlative.",
+    "introTr": "Kısa sıfatlara -er/-est eklenir, uzun sıfatlarda more/most kullanılır. Karşılaştırmadan sonra than, en üstünlükten önce the gelir.",
+    "points": [
+      {"en": "Short adjectives: -er than, the -est", "tr": "Kısa sıfatlar: -er than, the -est", "examples": [["Ankara is colder than Izmir.", "Ankara İzmir'den soğuktur."], ["It's the tallest building in the city.", "Şehrin en yüksek binası."]]},
+      {"en": "Long adjectives: more / the most", "tr": "Uzun sıfatlar: more / the most", "examples": [["This book is more interesting than that one.", "Bu kitap ondan daha ilginç."]]},
+      {"en": "Irregular: good → better → best, bad → worse → worst, far → further", "tr": "Düzensiz: good, bad, far", "examples": [["Her English is better than mine.", "Onun İngilizcesi benimkinden iyi."]]},
+      {"en": "as … as for equal things", "tr": "Eşitlik için as … as", "examples": [["He's as tall as his father.", "Babası kadar uzun."]]}
+    ],
+    "quiz": [
+      {"q": "My car is ___ than yours.", "options": ["fast", "faster", "fastest"], "answer": 1},
+      {"q": "This is the ___ expensive hotel in town.", "options": ["more", "most", "much"], "answer": 1},
+      {"q": "Today is ___ than yesterday.", "options": ["badder", "worse", "worst"], "answer": 1},
+      {"q": "She is ___ old as me.", "options": ["as", "so", "than"], "answer": 0}
+    ]
+  },
+  {
+    "id": "countable",
+    "title": "Countable and uncountable nouns",
+    "titleTr": "Sayılabilen ve sayılamayan isimler",
+    "words": ["much", "many"],
+    "intro": "Countable nouns have a plural (one book, two books). Uncountable nouns don't (water, money, advice) and take a singular verb.",
+    "introTr": "Sayılabilen isimlerin çoğulu vardır (book → books). Sayılamayanların yoktur (water, money, advice) ve tekil fiil alır. Türkçede sayılabilen bazı kelimeler İngilizcede sayılamaz: information, advice, news, furniture.",
+    "points": [
+      {"en": "Uncountable: no a/an, no -s", "tr": "Sayılamayan: a/an ve -s almaz", "examples": [["I need some advice.", "Biraz tavsiyeye ihtiyacım var."], ["The news is good.", "Haber iyi."]]},
+      {"en": "Counting them: a piece of, a glass of, a bottle of", "tr": "Sayarken: a piece of, a glass of", "examples": [["a piece of information", "bir bilgi"], ["two cups of coffee", "iki fincan kahve"]]},
+      {"en": "Some words are uncountable in English but not in Turkish", "tr": "Türkçede sayılabilen ama İngilizcede sayılamayan kelimeler", "examples": [["information, advice, news, furniture, luggage, homework, research", "bilgi, tavsiye, haber, mobilya, bagaj, ödev, araştırma"]]}
+    ],
+    "quiz": [
+      {"q": "Can you give me some ___?", "options": ["informations", "information", "an information"], "answer": 1},
+      {"q": "There ___ a lot of traffic today.", "options": ["is", "are", "were"], "answer": 0},
+      {"q": "How ___ luggage do you have?", "options": ["many", "much", "a few"], "answer": 1},
+      {"q": "I bought two ___ of bread.", "options": ["breads", "loaves", "bread"], "answer": 1}
+    ]
+  },
+  {
+    "id": "gerund-infinitive",
+    "title": "-ing or to + verb?",
+    "titleTr": "-ing mi, to + fiil mi?",
+    "words": ["to", "-ing"],
+    "intro": "After some verbs the next verb takes -ing, after others to + verb. There is no rule you can see; learn them in pairs.",
+    "introTr": "Bazı fiillerden sonra gelen fiil -ing, bazılarından sonra to + fiil alır. Kural yoktur; çift olarak öğrenmek en iyisidir.",
+    "points": [
+      {"en": "+ -ing: enjoy, finish, mind, avoid, keep, suggest, can't stand", "tr": "+ -ing alanlar", "examples": [["I enjoy cooking.", "Yemek yapmaktan hoşlanırım."], ["Do you mind waiting?", "Beklemek sorun olur mu?"]]},
+      {"en": "+ to: want, need, decide, hope, plan, learn, promise, would like", "tr": "+ to alanlar", "examples": [["I want to learn English.", "İngilizce öğrenmek istiyorum."], ["She decided to stay.", "Kalmaya karar verdi."]]},
+      {"en": "After prepositions always -ing", "tr": "Edatlardan sonra her zaman -ing", "examples": [["I'm good at drawing.", "Çizmekte iyiyim."], ["Thanks for helping me.", "Yardım ettiğin için teşekkürler."]]},
+      {"en": "Both, same meaning: like, love, start, begin", "tr": "İkisi de, aynı anlam: like, love, start", "examples": [["It started raining / to rain.", "Yağmur başladı."]]}
+    ],
+    "quiz": [
+      {"q": "I finished ___ the report.", "options": ["writing", "to write", "write"], "answer": 0},
+      {"q": "They hope ___ next year.", "options": ["visiting", "to visit", "visit"], "answer": 1},
+      {"q": "She's interested in ___ photos.", "options": ["take", "to take", "taking"], "answer": 2},
+      {"q": "Would you like ___ something?", "options": ["drinking", "to drink", "drink"], "answer": 1}
+    ]
+  },
+  {
+    "id": "conditionals",
+    "title": "If: first and second conditional",
+    "titleTr": "Koşul cümleleri",
+    "words": ["if", "would"],
+    "intro": "First conditional: real, possible future (if + present, will). Second conditional: imagined or unlikely (if + past, would).",
+    "introTr": "Birinci koşul: gerçek, olası gelecek (if + geniş zaman, will). İkinci koşul: hayalî ya da düşük ihtimalli durum (if + geçmiş zaman, would). If'li kısımda will kullanılmaz.",
+    "points": [
+      {"en": "First: if + present, will + verb", "tr": "Birinci: if + geniş zaman, will", "examples": [["If it rains, we'll stay at home.", "Yağmur yağarsa evde kalırız."]]},
+      {"en": "Second: if + past, would + verb", "tr": "İkinci: if + geçmiş zaman, would", "examples": [["If I had more money, I would buy a house.", "Daha çok param olsa ev alırdım."]]},
+      {"en": "If I were you… (advice)", "tr": "Senin yerinde olsam… (tavsiye)", "examples": [["If I were you, I'd take the job.", "Senin yerinde olsam işi kabul ederdim."]]},
+      {"en": "No will after if", "tr": "If'ten sonra will yok", "examples": [["If you call me, I'll come. (not If you will call)", "Ararsan gelirim."]]}
+    ],
+    "quiz": [
+      {"q": "If you heat ice, it ___.", "options": ["melts", "would melt", "melted"], "answer": 0},
+      {"q": "If I ___ rich, I would travel the world.", "options": ["am", "were", "will be"], "answer": 1},
+      {"q": "If she studies, she ___ the exam.", "options": ["passes", "will pass", "would pass"], "answer": 1},
+      {"q": "If I were you, I ___ see a doctor.", "options": ["will", "would", "am"], "answer": 1}
+    ]
+  },
+  {
+    "id": "passive",
+    "title": "The passive",
+    "titleTr": "Edilgen yapı",
+    "words": ["by", "was"],
+    "intro": "Use be + past participle when the action matters more than who does it. Add by + person only if it's useful.",
+    "introTr": "Eylemi yapan değil eylemin kendisi önemliyse be + üçüncü hâl kullanılır. Yapanı söylemek gerekirse by eklenir. Türkçedeki -ıl/-ın ekine benzer.",
+    "points": [
+      {"en": "Present: am/is/are + past participle", "tr": "Geniş zaman: am/is/are + üçüncü hâl", "examples": [["English is spoken all over the world.", "İngilizce tüm dünyada konuşulur."]]},
+      {"en": "Past: was/were + past participle", "tr": "Geçmiş: was/were + üçüncü hâl", "examples": [["The bridge was built in 1973.", "Köprü 1973'te yapıldı."]]},
+      {"en": "by + who did it", "tr": "by + yapan", "examples": [["This book was written by Orhan Pamuk.", "Bu kitap Orhan Pamuk tarafından yazıldı."]]},
+      {"en": "With modals: can be, must be, will be", "tr": "Yardımcı fiillerle", "examples": [["The form must be signed.", "Form imzalanmalı."]]}
+    ],
+    "quiz": [
+      {"q": "Coffee ___ in Brazil.", "options": ["grows", "is grown", "is growing"], "answer": 1},
+      {"q": "My bike ___ last night.", "options": ["stole", "was stolen", "is stolen"], "answer": 1},
+      {"q": "The letters ___ every morning.", "options": ["are delivered", "deliver", "is delivered"], "answer": 0}
+    ]
+  },
+  {
+    "id": "question-words",
+    "title": "Question words and word order",
+    "titleTr": "Soru kelimeleri ve sıralama",
+    "words": ["what", "where"],
+    "intro": "Put the question word first, then the auxiliary (do, is, can…), then the subject, then the main verb.",
+    "introTr": "Soru kelimesi başa gelir, ardından yardımcı fiil (do, is, can…), sonra özne, sonra ana fiil. Türkçede soru eki sonda olduğu için sıralama ters gelir.",
+    "points": [
+      {"en": "Question word + auxiliary + subject + verb", "tr": "Soru kelimesi + yardımcı fiil + özne + fiil", "examples": [["Where do you live?", "Nerede yaşıyorsun?"], ["What are you doing?", "Ne yapıyorsun?"]]},
+      {"en": "who, what, where, when, why, how, which, whose", "tr": "kim, ne, nerede, ne zaman, neden, nasıl, hangi, kimin", "examples": [["Whose bag is this?", "Bu kimin çantası?"]]},
+      {"en": "how + adjective/adverb", "tr": "how + sıfat/zarf", "examples": [["How old are you? How much is it? How often do you swim?", "Kaç yaşındasın? Ne kadar? Ne sıklıkla yüzersin?"]]},
+      {"en": "Who as subject: no do", "tr": "Özne olarak who: do yok", "examples": [["Who called you? (not Who did call you)", "Seni kim aradı?"]]}
+    ],
+    "quiz": [
+      {"q": "Where ___ your parents live?", "options": ["does", "do", "are"], "answer": 1},
+      {"q": "How ___ does it cost?", "options": ["many", "much", "long"], "answer": 1},
+      {"q": "Who ___ the window?", "options": ["broke", "did break", "breaks did"], "answer": 0},
+      {"q": "___ is your birthday? In May.", "options": ["When", "Where", "Which"], "answer": 0}
+    ]
+  }
+]

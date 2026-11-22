@@ -19,6 +19,9 @@ struct StudySessionView: View {
     @State private var finished = false
     @State private var coverageAtStart = 0.0
     @State private var learnedAtStart = 0
+    /// State before the last answer, so "Too easy" can re-grade it.
+    @State private var previous: CardState?
+    @State private var note: FeedbackNote = .none
 
     var body: some View {
         GeometryReader { geo in
@@ -28,8 +31,9 @@ struct StudySessionView: View {
                 if finished || exercise == nil {
                     SessionSummary(engine: engine, coverageAtStart: coverageAtStart, learnedAtStart: learnedAtStart) { dismiss() }
                 } else if let ex = exercise {
-                    ExerciseView(exercise: ex, phase: $phase, wide: wide, onAnswer: answer, onIntroDone: introDone,
-                                 onKnown: markKnown, onContinue: next, onSwitchToTyping: switchToTyping)
+                    ExerciseView(exercise: ex, phase: $phase, wide: wide, checking: engine?.isChecking ?? false, note: note,
+                                 onAnswer: answer, onIntroDone: introDone, onKnown: markKnown, onContinue: next,
+                                 onSwitchToTyping: switchToTyping, onTooEasy: tooEasy)
                         .id(ex.id)
                         .transition(.asymmetric(insertion: .move(edge: .trailing).combined(with: .opacity), removal: .opacity))
                 }
@@ -66,7 +70,8 @@ struct StudySessionView: View {
         guard engine == nil else { return }
         coverageAtStart = model.progress.coverage(model.content)
         learnedAtStart = model.progress.cards.values.filter(\.isLearned).count
-        let sayIt = model.settings.sayItEnabled && model.store.isPro && model.listener.isAvailableOffline
+        // Availability is checked when the exercise starts; if speech can't be recognized offline it falls back to typing.
+        let sayIt = model.settings.sayItEnabled && model.store.isPro
         let seed: UInt64 = ShotsTour.active ? 7 : UInt64(Date().timeIntervalSince1970)
         let e = SessionEngine(content: model.content, progress: model.progress, now: Date(), decks: request.decks,
                               newLimit: request.extraNew, sayItAvailable: sayIt, seed: seed)
@@ -82,11 +87,42 @@ struct StudySessionView: View {
 
     private func answer(_ grade: Grade, chosen: Int?, typed: String?) {
         guard let ex = exercise, let engine else { return }
+        let key = ex.item.key
         let seconds = Date().timeIntervalSince(startedAt)
-        model.progress.record(ex.item.key, grade: grade, now: Date(), seconds: seconds)
-        engine.answered(grade, newState: model.progress.state(ex.item.key))
+        let before = model.progress.state(key)
+        previous = before
+        if engine.isChecking {
+            // "I know this word" check: right → skip it (one confirmation in 3 weeks); wrong → teach it.
+            let passed = grade != .again
+            if passed { model.progress.passKnownCheck(key, now: Date()) }
+            engine.checked(passed: passed)
+            note = passed ? .knownChecked : .checkFailed
+        } else {
+            model.progress.record(key, grade: grade, now: Date(), seconds: seconds)
+            let after = model.progress.state(key)
+            engine.answered(grade, newState: after)
+            if after.status == .review && before.status != .review {
+                note = .learned(days: Int(after.interval.rounded()))
+            } else if after.status == .review {
+                note = .review(days: Int(after.interval.rounded()), mastered: model.progress.isMastered(after) && !model.progress.isMastered(before))
+            } else if grade == .again {
+                note = .again
+            } else {
+                note = .none
+            }
+        }
         if grade == .again { Haptics.error(model.settings.haptics) } else { Haptics.success(model.settings.haptics) }
         withAnimation(.spring(duration: 0.3)) { phase = .feedback(grade: grade, chosen: chosen, typed: typed) }
+    }
+
+    /// "Too easy": count the last right answer as easy, so the word comes back much later.
+    private func tooEasy() {
+        guard let ex = exercise, let previous, let engine else { return }
+        model.progress.upgradeToEasy(ex.item.key, previous: previous, now: Date())
+        engine.remove(ex.item.key)
+        let after = model.progress.state(ex.item.key)
+        note = .review(days: Int(after.interval.rounded()), mastered: model.progress.isMastered(after))
+        next()
     }
 
     private func introDone() {
@@ -95,9 +131,7 @@ struct StudySessionView: View {
     }
 
     private func markKnown() {
-        guard let ex = exercise else { return }
-        model.progress.markKnown([ex.item.key], now: Date())
-        engine?.skipCurrent()
+        engine?.startKnownCheck()
         next()
     }
 
@@ -127,11 +161,14 @@ struct ExerciseView: View {
     let exercise: Exercise
     @Binding var phase: StudySessionView.Phase
     let wide: Bool
+    let checking: Bool
+    let note: FeedbackNote
     let onAnswer: (Grade, Int?, String?) -> Void
     let onIntroDone: () -> Void
     let onKnown: () -> Void
     let onContinue: () -> Void
     let onSwitchToTyping: () -> Void
+    let onTooEasy: () -> Void
 
     var item: StudyItem { exercise.item }
 
@@ -219,6 +256,7 @@ struct ExerciseView: View {
     }
 
     private var instruction: LocalizedStringKey {
+        if checking { return "Quick check: what does it mean?" }
         switch exercise.kind {
         case .intro: "New word"
         case .wordToMeaning: "What does it mean?"
@@ -277,15 +315,15 @@ struct ExerciseView: View {
 
     @ViewBuilder private var bottomBar: some View {
         if exercise.kind == .intro {
-            VStack(spacing: 10) {
-                Button(action: onIntroDone) { Text("Got it, practice it") }.buttonStyle(PrimaryButtonStyle())
-                Button(action: onKnown) { Text("I already know this word") }
-                    .font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
+            HStack(spacing: 12) {
+                Button(action: onKnown) { Label("I know it", systemImage: "checkmark") }.buttonStyle(SecondaryButtonStyle())
+                Button(action: onIntroDone) { Label("Learn it", systemImage: "brain.head.profile") }.buttonStyle(PrimaryButtonStyle())
             }
             .padding(.horizontal, 20).padding(.bottom, 12).padding(.top, 8)
             .frame(maxWidth: 560)
         } else if case .feedback(let grade, _, let typed) = phase {
-            FeedbackPanel(item: item, grade: grade, typed: typed, onContinue: onContinue)
+            FeedbackPanel(item: item, grade: grade, typed: typed, note: note, onContinue: onContinue,
+                          onTooEasy: grade == .good && !checking ? onTooEasy : nil)
             .transition(.move(edge: .bottom).combined(with: .opacity))
         }
     }
@@ -346,6 +384,7 @@ struct IntroCard: View {
             Text(item.headword).font(.rounded(50, .bold)).multilineTextAlignment(.center).minimumScaleFactor(0.5)
             POSBadge(pos: item.pos)
             IPARow(text: item.headword, us: item.us, uk: item.uk)
+            SayItButton(listener: model.listener, word: item.headword, forms: item.forms)
         }
         let detail = VStack(alignment: .leading, spacing: 14) {
             if model.settings.meaning == .turkish {
@@ -471,13 +510,25 @@ struct SayItAnswer: View {
     }
 }
 
-/// Right or wrong, with the word's details so every answer teaches something.
+/// What the answer did to the word's memory, shown under the result.
+enum FeedbackNote: Equatable {
+    case none
+    case again
+    case learned(days: Int)
+    case review(days: Int, mastered: Bool)
+    case knownChecked
+    case checkFailed
+}
+
+/// Right or wrong, with the word's details and what happens next, so every answer teaches something.
 struct FeedbackPanel: View {
     @EnvironmentObject var model: AppModel
     let item: StudyItem
     let grade: Grade
     let typed: String?
+    let note: FeedbackNote
     let onContinue: () -> Void
+    var onTooEasy: (() -> Void)?
 
     var body: some View {
         let ok = grade != .again
@@ -488,26 +539,62 @@ struct FeedbackPanel: View {
                     .font(.rounded(20, .bold))
                 Spacer()
                 SpeakButton(text: item.headword, size: 16)
+                SpeakButton(text: item.headword, size: 14, slow: true)
             }
             .foregroundStyle(ok ? Color.good : Color.bad)
+            noteView
             if let typed, !typed.isEmpty, grade != .good {
                 Text("You wrote: \(typed)").font(.subheadline).foregroundStyle(.secondary)
             }
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text(item.headword).font(.rounded(22, .bold))
-                if !item.us.isEmpty { Text("/\(model.settings.accent == .uk && !item.uk.isEmpty ? item.uk : item.us)/").font(.system(size: 16, design: .serif)).foregroundStyle(.secondary) }
+                let ipa = model.settings.accent == .uk && !item.uk.isEmpty ? item.uk : item.us
+                if !ipa.isEmpty { Text("/\(ipa)/").font(.system(size: 16, design: .serif)).foregroundStyle(.secondary) }
             }
             Text(model.settings.meaning == .turkish ? "\(item.tr) — \(item.def)" : item.def).font(.callout)
             ExampleText(item: item, font: .rounded(16))
-            Button(action: onContinue) { Text("Continue") }
-                .buttonStyle(PrimaryButtonStyle(color: ok ? .good : .bad))
-                .keyboardShortcut(.defaultAction)
+            HStack(spacing: 10) {
+                if let onTooEasy {
+                    Button(action: onTooEasy) { Text("Too easy") }
+                        .buttonStyle(SecondaryButtonStyle())
+                        .frame(maxWidth: 150)
+                        .accessibilityHint(Text("Shows this word again much later"))
+                }
+                Button(action: onContinue) { Text("Continue") }
+                    .buttonStyle(PrimaryButtonStyle(color: ok ? .good : .bad))
+                    .keyboardShortcut(.defaultAction)
+            }
         }
         .padding(20)
         .frame(maxWidth: 720)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
         .padding(.horizontal, 12)
         .padding(.bottom, 8)
+    }
+
+    @ViewBuilder private var noteView: some View {
+        switch note {
+        case .none:
+            EmptyView()
+        case .again:
+            Label("It will come back in a few minutes.", systemImage: "arrow.clockwise").font(.subheadline).foregroundStyle(.secondary)
+        case .learned(let days):
+            Label(days <= 1 ? "Learned! Next review tomorrow." : "Learned! Next review in \(days) days.", systemImage: "sparkles")
+                .font(.subheadline.weight(.semibold)).foregroundStyle(Color.brandTeal)
+        case .review(let days, let mastered):
+            if mastered {
+                Label("Mastered! In your long-term memory now. Next check in \(days) days.", systemImage: "star.fill")
+                    .font(.subheadline.weight(.semibold)).foregroundStyle(.orange)
+            } else {
+                Label("Stronger memory: next review in \(days) days.", systemImage: "arrow.up.right")
+                    .font(.subheadline).foregroundStyle(Color.brandTeal)
+            }
+        case .knownChecked:
+            Label("You know it. Skipped; we'll check it once more in 3 weeks.", systemImage: "checkmark.seal.fill")
+                .font(.subheadline.weight(.semibold)).foregroundStyle(Color.brandTeal)
+        case .checkFailed:
+            Label("No problem, let's learn it properly.", systemImage: "brain.head.profile").font(.subheadline).foregroundStyle(.secondary)
+        }
     }
 }
 
@@ -533,13 +620,39 @@ struct SessionSummary: View {
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 14) {
                         tile("\(reviewed)", "exercises", "square.stack.3d.up.fill", .brandIndigo)
                         tile("\(accuracy)%", "correct", "target", .good)
-                        tile("\(engine?.newIntroduced ?? 0)", "new words", "sparkles", .brandTeal)
+                        tile("+\(max(0, learned - learnedAtStart))", "words learned", "sparkles", .brandTeal)
                         tile("\(model.progress.streak(now: Date()))", "day streak", "flame.fill", .orange)
                     }
-                    if learned > learnedAtStart || cov > coverageAtStart + 0.01 {
-                        Panel {
+                    Panel {
+                        VStack(alignment: .leading, spacing: 8) {
                             Text("You now know \(learned) words, about \(Int(cov.rounded()))% of everyday English.")
                                 .font(.headline)
+                            if cov > coverageAtStart + 0.005 {
+                                Text("+\(String(format: "%.1f", cov - coverageAtStart)) points of everyday English in this session.")
+                                    .font(.subheadline).foregroundStyle(Color.brandTeal)
+                            }
+                            if (engine?.knownByCheck ?? 0) > 0 {
+                                Text("\(engine?.knownByCheck ?? 0) words you already knew were skipped after a quick check.")
+                                    .font(.subheadline).foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    let newWords = (engine?.learnedKeys ?? []).compactMap { model.content.item($0) }
+                    if !newWords.isEmpty {
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("New in your memory").font(.title3.bold())
+                            ForEach(newWords) { w in
+                                HStack(spacing: 10) {
+                                    SpeakButton(text: w.headword, size: 14)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(w.headword).font(.headline)
+                                        Text(model.settings.meaning == .turkish ? w.tr : w.def).font(.subheadline).foregroundStyle(.secondary).lineLimit(2)
+                                    }
+                                    Spacer()
+                                }
+                                .padding(10)
+                                .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            }
                         }
                     }
                 } else {

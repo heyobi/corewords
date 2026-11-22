@@ -13,12 +13,14 @@ struct LessonsView: View {
                         Text("The 50 most common English words are mostly function words like the, of, to and in. They make up about half of every text. Each lesson ends with a short quiz.")
                             .font(.subheadline).foregroundStyle(.secondary)
                     }
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 300), spacing: 12)], spacing: 12) {
-                        ForEach(model.content.lessons) { lesson in
-                            NavigationLink(value: lesson) { LessonTile(lesson: lesson, score: model.progress.lessonScores[lesson.id]) }
-                                .buttonStyle(.plain)
-                        }
+                    lessonGrid(model.content.lessons.filter { $0.group != "grammar" })
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Tenses and grammar").font(.title3.bold())
+                        Text("The structures that hold the words together: present, past and future, the present perfect, comparatives, conditionals and more. Short, with examples and a quiz.")
+                            .font(.subheadline).foregroundStyle(.secondary)
                     }
+                    .padding(.top, 6)
+                    lessonGrid(model.content.lessons.filter { $0.group == "grammar" })
                     PhrasalSection()
                 }
                 .padding(20)
@@ -30,6 +32,17 @@ struct LessonsView: View {
             .navigationDestination(for: Lesson.self) { LessonView(lesson: $0) }
             .navigationDestination(for: String.self) { key in
                 if let item = model.content.item(key) { WordDetailView(item: item) }
+            }
+        }
+    }
+}
+
+extension LessonsView {
+    func lessonGrid(_ lessons: [Lesson]) -> some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 300), spacing: 12)], spacing: 12) {
+            ForEach(lessons) { lesson in
+                NavigationLink(value: lesson) { LessonTile(lesson: lesson, score: model.progress.lessonScores[lesson.id]) }
+                    .buttonStyle(.plain)
             }
         }
     }

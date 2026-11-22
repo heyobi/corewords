@@ -10,7 +10,7 @@ final class ContentTests: XCTestCase {
         XCTAssertEqual(content.ordered[.core]?.count, 2858)  // 49 basics + 2,809 NGSL 1.2
         XCTAssertGreaterThan(content.ordered[.extended]?.count ?? 0, 2100)
         XCTAssertGreaterThanOrEqual(content.ordered[.phrasal]?.count ?? 0, 200)
-        XCTAssertEqual(content.lessons.count, 18)
+        XCTAssertEqual(content.lessons.count, 30)
         XCTAssertEqual(content.phonetics.sounds.count, 44)
         // NGSL starts with the most frequent word after the basics.
         XCTAssertEqual(content.ordered[.core]?[49].headword, "the")
