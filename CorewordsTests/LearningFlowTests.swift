@@ -132,3 +132,16 @@ final class LearningFlowTests: XCTestCase {
         XCTAssertEqual(content.lessons.filter { $0.group == "words" }.count, 18)
     }
 }
+
+final class GapCapitalizationTests: XCTestCase {
+    func testDistractorsMatchSentenceStartCapital() {
+        let content = ContentTests.content
+        let item = content.ordered[.phrasal]!.first { $0.headword == "look up" }!
+        XCTAssertTrue(item.answer.first!.isUppercase)  // "[Look up] the word in a dictionary."
+        let e = SessionEngine(content: content, progress: ProgressData(), now: Date(), decks: [.phrasal], seed: 21)
+        for _ in 0..<10 {
+            let ex = e.make(.gapChoice, for: item)
+            XCTAssertTrue(ex.options.allSatisfy { $0.first!.isUppercase }, "\(ex.options)")
+        }
+    }
+}

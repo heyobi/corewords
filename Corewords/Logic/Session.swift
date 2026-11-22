@@ -141,7 +141,11 @@ final class SessionEngine {
             let others = distractors(for: item, count: 3, similarSpelling: kind == .listen).map(\.headword)
             return shuffled(kind, item, right: item.headword, wrong: others)
         case .gapChoice:
-            let others = distractors(for: item, count: 3).map(\.answer)
+            // Match the answer's capitalization so a capital letter at the start of a sentence gives nothing away.
+            let capital = item.answer.first?.isUppercase ?? false
+            let others = distractors(for: item, count: 3).map { d -> String in
+                capital ? d.answer.prefix(1).uppercased() + d.answer.dropFirst() : d.answer
+            }
             return shuffled(kind, item, right: item.answer, wrong: others)
         }
     }
