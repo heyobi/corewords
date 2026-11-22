@@ -1,4 +1,4 @@
-"""App Store screenshots for Midfold: headline, subline and the simulator screenshot on a gradient.
+"""App Store screenshots for Corewords: headline, subline and the simulator screenshot on a gradient.
 
 Usage: python scripts/compose-screens.py <raw-dir> <out-dir> <iphone|ipad|duo-outer|duo-inner>
 Raw screenshots come from .github/workflows/screenshots.yml; output has the same size as the raw image.
@@ -10,11 +10,13 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 # (raw name, title, subtitle on iPhone Duo, subtitle elsewhere)
 ORDER = [
-    ('1-meadow', 'Pump the hinge to fly', 'Every close-and-open is a wing flap', 'Tap to flap, find the rhythm'),
-    ('2-cliffs', 'Ride the wind', 'Quick, deep pumps flap hard', 'Updrafts, downdrafts, sliding gates'),
-    ('3-caves', 'Thread the tunnels', 'Small pumps make small hops', 'Tight tunnels need gentle flaps'),
-    ('4-won', 'Three stars, 18 levels', 'Plus Endless and a daily course', 'Plus Endless and a daily course'),
-    ('5-home', 'Three paper worlds', 'Made for iPhone Duo', 'Game Center leaderboards'),
+    ('1-today', 'Most useful words first', 'Made for iPhone Duo, iPhone and iPad', '2,800 words cover 92% of English'),
+    ('2-intro', 'US & UK pronunciation', 'IPA, audio and real examples', 'IPA, audio and real examples'),
+    ('3-gap', 'Spaced repetition', 'Six kinds of exercise', 'Words return before you forget'),
+    ('4-listen', 'Train your ear', 'Listen, choose, type, say it', 'Listen, choose, type, say it'),
+    ('5-progress', 'See your English grow', 'Coverage by frequency band', 'Coverage by frequency band'),
+    ('6-sounds', 'All 44 English sounds', 'Minimal pairs: sheep or ship?', 'Minimal pairs: sheep or ship?'),
+    ('7-lessons', 'Grammar for small words', 'a, the, in, on, at + 205 phrasal verbs', 'a, the, in, on, at + phrasal verbs'),
 ]
 
 BOLD = 'C:/Windows/Fonts/segoeuib.ttf'
@@ -68,7 +70,7 @@ def compose(raw: Path, title: str, sub: str, out: Path, dark: bool, fold: float 
         shot = mark_fold(shot, fold, fold_label)
     w, h = shot.size
     k = min(w, h) / 1206 * (1 if h >= w else 0.8)  # landscape (iPhone Duo inner display): scale by height
-    bg = gradient((30, 38, 92), (88, 64, 200), w, h) if dark else gradient((92, 132, 255), (120, 96, 245), w, h)
+    bg = gradient((40, 34, 140), (13, 110, 104), w, h) if dark else gradient((79, 70, 229), (20, 160, 150), w, h)
     canvas = bg.convert('RGBA')
     d = ImageDraw.Draw(canvas)
     f1 = ImageFont.truetype(BOLD, int(96 * k))
@@ -109,8 +111,8 @@ def main():
             print('missing', name)
             continue
         i += 1
-        fold = 0.5 if kind == 'duo-inner' and name != '5-home' else None
-        label = 'iPhone Duo hinge'
+        fold = 0.5 if kind == 'duo-inner' else None
+        label = 'iPhone Duo'
         compose(src, title, sub_duo if duo else sub, out / f'{i}-{name[2:]}.png', i % 2 == 1, fold, label)
         print('saved', i, name)
 
